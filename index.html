@@ -67,13 +67,11 @@ input,select{width:100%;padding:0.8rem;border-radius:0.75rem;margin:0.4rem 0;bor
 <input type="tel" id="num" placeholder="Card Number">
 <input type="text" id="name" placeholder="Cardholder Name">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-<input type="text" id="exp" placeholder="MM/YY">
-<input type="tel" id="cvv" placeholder="CVV">
-</div>
-<button class="btn btn-blue" onclick="saveCard()">Save</button>
+@@ -53,34 +74,26 @@
 <button class="btn btn-ghost" onclick="toggleAddForm()">Cancel</button>
 </div>
 
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:1rem;">
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:1rem;">
 <button class="btn btn-ghost" onclick="exportData()">Backup</button>
 <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">Import</button>
@@ -85,39 +83,60 @@ input,select{width:100%;padding:0.8rem;border-radius:0.75rem;margin:0.4rem 0;bor
 </div>
 
 <script>
+let VAULT_KEY = null;
 let VAULT_KEY=null;
 
+/* ---------- Utility ---------- */
+function bufferToBase64(buffer){
+return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+function base64ToBuffer(base64){
+return Uint8Array.from(atob(base64),c=>c.charCodeAt(0));
+}
+function randomChallenge(){
+return window.crypto.getRandomValues(new Uint8Array(32));
+}
 /* Utility */
 function bufferToBase64(buffer){return btoa(String.fromCharCode(...new Uint8Array(buffer)));}
 function base64ToBuffer(base64){return Uint8Array.from(atob(base64),c=>c.charCodeAt(0));}
 function randomChallenge(){return window.crypto.getRandomValues(new Uint8Array(32));}
 
+/* ---------- Vault Key ---------- */
+function generateVaultKey(){
+const array=new Uint8Array(32);
+window.crypto.getRandomValues(array);
+return bufferToBase64(array);
+}
 /* Vault Key */
 function generateVaultKey(){const a=new Uint8Array(32);window.crypto.getRandomValues(a);return bufferToBase64(a);}
 function initializeVault(){
 if(!localStorage.getItem("vault_key")){
 const key=generateVaultKey();
-localStorage.setItem("vault_key",key);
-localStorage.setItem("vault_data",CryptoJS.AES.encrypt("[]",key).toString());
+@@ -89,7 +102,7 @@
 }
 }
 
+/* ---------- WebAuthn ---------- */
 /* WebAuthn */
 async function registerBiometric(){
 const publicKey={
 challenge:randomChallenge(),
-rp:{name:"Secure Card Vault"},
-user:{id:randomChallenge(),name:"vault-user",displayName:"Vault User"},
-pubKeyCredParams:[{type:"public-key",alg:-7}],
+@@ -99,60 +112,54 @@
 authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required"},
 timeout:60000
 };
+try{
 const credential=await navigator.credentials.create({publicKey});
 localStorage.setItem("vault_bio_id",bufferToBase64(credential.rawId));
 initializeVault();
+alert("Biometric enabled");
+}catch(e){alert("Failed");}
 }
 
 async function unlockWithBiometric(){
+const storedId=localStorage.getItem("vault_bio_id");
+if(!storedId){registerBiometric();return;}
+
 let storedId=localStorage.getItem("vault_bio_id");
 if(!storedId){await registerBiometric();storedId=localStorage.getItem("vault_bio_id");}
 const publicKey={
@@ -126,22 +145,28 @@ allowCredentials:[{id:base64ToBuffer(storedId),type:"public-key",transports:["in
 userVerification:"required",
 timeout:60000
 };
+try{
 await navigator.credentials.get({publicKey});
 VAULT_KEY=localStorage.getItem("vault_key");
 document.getElementById("unlockSection").classList.add("hidden");
 document.getElementById("mainContent").classList.remove("hidden");
 updateDropdown();
+}catch(e){alert("Verification failed");}
 }
 
+/* ---------- Vault Logic ---------- */
 /* Vault Logic */
 function getCards(){
 const d=localStorage.getItem("vault_data");
 if(!d||!VAULT_KEY)return[];
+try{return JSON.parse(CryptoJS.AES.decrypt(d,VAULT_KEY).toString(CryptoJS.enc.Utf8));}
+catch(e){return[];}
 return JSON.parse(CryptoJS.AES.decrypt(d,VAULT_KEY).toString(CryptoJS.enc.Utf8));
 }
 function saveCard(){
 const editId=document.getElementById('editId').value;
 const card={
+id:Date.now(),
 id:editId?parseInt(editId):Date.now(),
 nick:nick.value,
 type:type.value,
@@ -151,69 +176,68 @@ exp:exp.value,
 cvv:cvv.value
 };
 let cards=getCards();
+cards.push(card);
 if(editId){cards[cards.findIndex(c=>c.id==editId)]=card;}
 else{cards.push(card);}
 localStorage.setItem("vault_data",CryptoJS.AES.encrypt(JSON.stringify(cards),VAULT_KEY).toString());
+toggleAddForm();
+updateDropdown();
 toggleAddForm();updateDropdown();
 }
 function deleteCard(id){
 let cards=getCards().filter(c=>c.id!=id);
 localStorage.setItem("vault_data",CryptoJS.AES.encrypt(JSON.stringify(cards),VAULT_KEY).toString());
+updateDropdown();
+handleSelection();
 updateDropdown();handleSelection();
 }
 function updateDropdown(){
 const s=document.getElementById("cardSelector");
-const c=getCards();
-s.innerHTML='<option value="">Select</option>'+c.map(x=>`<option value="${x.id}">${x.nick}</option>`).join('');
-}
-function handleSelection(){
-const id=document.getElementById("cardSelector").value;
-if(!id){cardDisplay.innerHTML="";return;}
+@@ -165,7 +172,7 @@
 const card=getCards().find(c=>c.id==id);
 cardDisplay.innerHTML=`
 <div class="credit-card">
+<div class="card-header"><div class="card-chip"></div></div>
 <div class="card-header"><div class="card-chip"></div><div>${card.type}</div></div>
 <div class="card-number" onclick="navigator.clipboard.writeText('${card.num}')">${card.num}</div>
 <div class="card-footer">
 <div><span class="label">Holder</span><span onclick="navigator.clipboard.writeText('${card.name}')">${card.name}</span></div>
-<div><span class="label">Exp</span><span onclick="navigator.clipboard.writeText('${card.exp}')">${card.exp}</span></div>
-<div><span class="label">CVV</span><span onclick="navigator.clipboard.writeText('${card.cvv}')">•••</span></div>
-</div>
-</div>
+@@ -176,22 +183,32 @@
 <button class="btn btn-danger" onclick="deleteCard(${card.id})">Delete</button>
 `;
 }
+function toggleAddForm(){
+addForm.classList.toggle("hidden");
+}
 function toggleAddForm(){addForm.classList.toggle("hidden");}
 
+/* ---------- Backup ---------- */
 /* Backup */
 function exportData(){
 const blob=new Blob([JSON.stringify({
 data:localStorage.getItem("vault_data"),
 key:localStorage.getItem("vault_key")
+key:localStorage.getItem("vault_key"),
+bio:localStorage.getItem("vault_bio_id")
 })],{type:"text/plain"});
 const a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
 a.download="vault_backup.txt";
 a.click();
 }
-
 function importData(input){
 const reader=new FileReader();
 reader.onload=e=>{
 const j=JSON.parse(e.target.result);
-
 localStorage.setItem("vault_data",j.data);
 localStorage.setItem("vault_key",j.key);
-
-// Remove old biometric reference
-localStorage.removeItem("vault_bio_id");
-
-alert("Backup restored. Please enable biometrics again.");
+localStorage.setItem("vault_bio_id",j.bio);
+alert("Backup restored");
 location.reload();
 };
 reader.readAsText(input.files[0]);
 }
-
 </script>
+
 </body>
 </html>
