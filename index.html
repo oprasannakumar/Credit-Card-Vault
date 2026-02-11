@@ -10,20 +10,15 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; color: #1e293b; }
         .container { max-width: 440px; margin: auto; background: white; padding: 2rem; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         .credit-card { width: 100%; height: 210px; border-radius: 15px; padding: 25px; box-sizing: border-box; color: white; position: relative; box-shadow: 0 12px 24px rgba(0,0,0,0.2); margin-top: 15px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); }
-        .card-infinite { background: linear-gradient(135deg, #000000, #434343); border: 1px solid #ffd700; }
-        .card-platinum { background: linear-gradient(135deg, #94a3b8, #e2e8f0); color: #1e293b !important; }
         .card-number { font-family: 'Courier New', monospace; font-size: 1.3rem; letter-spacing: 2px; margin: 15px 0; cursor: pointer; display: block; }
         input, button, select { width: 100%; padding: 0.8rem; margin: 0.4rem 0; border-radius: 0.6rem; border: 1px solid #d1d5db; box-sizing: border-box; font-size: 1rem; }
         button { background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
         .biometric-btn { background: #6366f1; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .hidden { display: none; }
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 10px 25px; border-radius: 30px; font-size: 0.85rem; opacity: 0; transition: 0.3s; z-index: 1000; pointer-events: none; }
-        .debug-box { font-size: 0.7rem; color: #ef4444; background: #fef2f2; padding: 10px; border-radius: 8px; margin-top: 10px; display: none; }
+        .debug-box { font-size: 0.7rem; color: #ef4444; background: #fef2f2; padding: 10px; border-radius: 8px; margin-top: 10px; display: none; border: 1px solid #fee2e2; }
     </style>
 </head>
 <body>
-
-<div id="toast">Copied!</div>
 
 <div class="container">
     <h2 style="text-align:center; margin-top:0;">🔒 Vault</h2>
@@ -46,7 +41,6 @@
             <select id="type">
                 <option value="Visa Signature">Visa Signature</option>
                 <option value="Visa Infinite">Visa Infinite</option>
-                <option value="Mastercard World">Mastercard World</option>
             </select>
             <input type="text" id="num" placeholder="Card Number" maxlength="19">
             <input type="text" id="name" placeholder="Cardholder Name">
@@ -69,7 +63,6 @@
 
 <script>
     let MASTER_KEY = "";
-    const RP_ID = window.location.hostname;
 
     window.onload = () => {
         if (localStorage.getItem('vault_bio_key')) document.getElementById('bioBtn').classList.remove('hidden');
@@ -90,15 +83,14 @@
             const credential = await navigator.credentials.create({
                 publicKey: {
                     challenge,
-                    rp: { name: "Secure Vault", id: RP_ID },
-                    user: { id: userId, name: "user@vault", displayName: "Vault User" },
+                    rp: { name: "Secure Vault" }, // Removed explicit ID to let browser infer
+                    user: { id: userId, name: "user", displayName: "User" },
                     pubKeyCredParams: [{ type: "public-key", alg: -7 }],
                     authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }
                 }
             });
 
             if (credential) {
-                // IMPORTANT: We store the key only if the hardware check passed
                 localStorage.setItem('vault_bio_key', CryptoJS.AES.encrypt(MASTER_KEY, "biometric-lock").toString());
                 alert("Fingerprint successfully linked! Please lock and try the fingerprint button.");
                 location.reload();
@@ -112,7 +104,7 @@
         const challenge = window.crypto.getRandomValues(new Uint8Array(32));
         try {
             const assertion = await navigator.credentials.get({
-                publicKey: { challenge, rpId: RP_ID, userVerification: "required" }
+                publicKey: { challenge, userVerification: "required" }
             });
 
             if (assertion) {
@@ -123,7 +115,7 @@
                 showVault();
             }
         } catch (e) {
-            showDebug("Error: " + e.message + " (Try password instead)");
+            showDebug("Error: " + e.message);
         }
     }
 
@@ -143,17 +135,14 @@
         updateDropdown();
     }
 
-    // --- UTILITIES ---
-    document.getElementById('num').addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
-        e.target.value = v ? v.join(' ') : e.target.value.replace(/\D/g, '');
-    });
+    function getDecryptedCards() {
+        const data = localStorage.getItem('vault_data');
+        if (!data) return [];
+        return JSON.parse(CryptoJS.AES.decrypt(data, MASTER_KEY).toString(CryptoJS.enc.Utf8));
+    }
 
-    document.getElementById('exp').addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
-    });
-
+    function updateDropdown() { const s = document.getElementById('cardSelector'); const c = getDecryptedCards(); s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x => `<option value="${x.id}">${x.nick}</option>`).join(''); }
+    function toggleAddForm() { document.getElementById('addForm').classList.toggle('hidden'); }
     function saveCard() {
         const card = { id: Date.now(), nick: document.getElementById('nick').value, type: document.getElementById('type').value, num: document.getElementById('num').value, exp: document.getElementById('exp').value, cvv: document.getElementById('cvv').value, name: document.getElementById('name').value };
         let cards = getDecryptedCards();
@@ -161,32 +150,12 @@
         localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString());
         updateDropdown(); toggleAddForm();
     }
-
-    function getDecryptedCards() {
-        const data = localStorage.getItem('vault_data');
-        if (!data) return [];
-        return JSON.parse(CryptoJS.AES.decrypt(data, MASTER_KEY).toString(CryptoJS.enc.Utf8));
-    }
-
     function renderSelectedCard() {
         const id = document.getElementById('cardSelector').value;
         const display = document.getElementById('selectedCardDisplay');
         if (!id) { display.innerHTML = ""; return; }
         const card = getDecryptedCards().find(c => c.id == id);
-        const theme = card.type.includes("Infinite") ? "card-infinite" : card.type.includes("Platinum") ? "card-platinum" : "credit-card";
-        display.innerHTML = `<div class="credit-card ${theme}"><div style="text-align:right; font-size:0.8rem;">${card.type}</div><div style="width:40px;height:30px;background:#ffd700;border-radius:4px;margin-bottom:10px;"></div><span class="card-number" onclick="copyValue('${card.num}')">${card.num}</span><div style="display:flex;justify-content:space-between;font-size:0.8rem;"><div>${card.name}</div><div>${card.exp}</div><div>***</div></div></div>`;
-    }
-
-    function copyValue(t) { navigator.clipboard.writeText(t); document.getElementById('toast').style.opacity = '1'; setTimeout(()=>document.getElementById('toast').style.opacity = '0', 1000); }
-    function updateDropdown() { const s = document.getElementById('cardSelector'); const c = getDecryptedCards(); s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x => `<option value="${x.id}">${x.nick}</option>`).join(''); }
-    function toggleAddForm() { document.getElementById('addForm').classList.toggle('hidden'); }
-    function exportData() {
-        const payload = JSON.stringify({ data: localStorage.getItem('vault_data'), hash: localStorage.getItem('vault_hash') });
-        const blob = new Blob([payload], {type: "text/plain"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "vault_backup.txt";
-        a.click();
+        display.innerHTML = `<div class="credit-card"><div>${card.type}</div><div style="width:40px;height:30px;background:#ffd700;border-radius:4px;margin-bottom:10px;"></div><span class="card-number" onclick="navigator.clipboard.writeText('${card.num}')">${card.num}</span><div>${card.name} | ${card.exp}</div></div>`;
     }
 </script>
 </body>
