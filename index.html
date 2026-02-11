@@ -303,11 +303,48 @@
     r.readAsText(i.files[0]);
 }
 
-function disableBiometric() {
-    localStorage.removeItem("vault_bio_id");
-    localStorage.removeItem("vault_bio_enabled");
-    alert("Biometrics disabled.");
+async function disableBiometric() {
+
+    const enabled = localStorage.getItem("vault_bio_enabled");
+    const storedId = localStorage.getItem("vault_bio_id");
+
+    if (!enabled || !storedId) {
+        alert("Biometrics already disabled.");
+        return;
+    }
+
+    const confirmDisable = confirm("Verify identity to disable biometrics?");
+    if (!confirmDisable) return;
+
+    const challenge = randomChallenge();
+
+    const publicKey = {
+        challenge,
+        allowCredentials: [{
+            id: base64ToBuffer(storedId),
+            type: "public-key",
+            transports: ["internal"]
+        }],
+        userVerification: "required",
+        timeout: 60000
+    };
+
+    try {
+        await navigator.credentials.get({ publicKey });
+
+        // 🔥 If biometric succeeds
+        localStorage.removeItem("vault_bio_id");
+        localStorage.removeItem("vault_bio_enabled");
+        localStorage.removeItem("vault_master_enc");
+        localStorage.removeItem("vault_device_key");
+
+        alert("Biometrics disabled securely.");
+
+    } catch (err) {
+        alert("Verification failed. Cannot disable biometrics.");
+    }
 }
+
     function showRecovery() { document.getElementById('unlockSection').classList.add('hidden'); document.getElementById('recoverySection').classList.remove('hidden'); }
     function handleRecovery() {
         const input = document.getElementById('rkInput').value.trim();
