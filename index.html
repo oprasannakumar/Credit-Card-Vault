@@ -18,27 +18,17 @@
         
         body { 
             font-family: 'Inter', -apple-system, sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main); 
-            margin: 0; padding: 0;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            min-height: 100dvh; 
+            background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; display: flex; 
+            align-items: center; justify-content: center; min-height: 100dvh; 
         }
 
         .container { 
-            width: calc(100% - 40px);
-            max-width: 380px; 
-            background: var(--container-bg); 
-            padding: 2rem 1.5rem; 
-            border-radius: 2rem; 
-            text-align: center; 
+            width: calc(100% - 40px); max-width: 380px; 
+            background: var(--container-bg); padding: 2rem 1.5rem; 
+            border-radius: 2rem; text-align: center; 
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
         }
 
         h2 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem; font-weight: 700; }
@@ -83,7 +73,7 @@
 </head>
 <body>
 
-<div id="toast">Copied to clipboard!</div>
+<div id="toast">Copied!</div>
 
 <div class="container">
     <h2>🔐 Secure Vault</h2>
@@ -100,28 +90,21 @@
         <div id="cardDisplay" style="width: 100%;"></div>
         <button class="btn btn-light" id="actionBtn" onclick="toggleAddForm()">+ Add New Card</button>
 
+        <div id="settingsSection" class="hidden" style="width: 100%; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; padding-top: 1rem;">
+            <h3 style="font-size: 1rem;">Change Master Password</h3>
+            <input type="password" id="currPass" placeholder="Current Password">
+            <input type="password" id="newPass" placeholder="New Password">
+            <button class="btn btn-blue" onclick="changePassword()">Update Password</button>
+            <button class="btn btn-ghost" onclick="toggleSettings()">Cancel</button>
+        </div>
+
         <div id="addForm" class="hidden">
             <input type="hidden" id="editId">
             <input type="text" id="nick" placeholder="Nickname">
             <select id="type">
-                <optgroup label="RuPay">
-                    <option value="RuPay Classic">RuPay Classic</option>
-                    <option value="RuPay Platinum">RuPay Platinum</option>
-                    <option value="RuPay Select">RuPay Select</option>
-                </optgroup>
-                <optgroup label="Visa">
-                    <option value="Visa Classic">Visa Classic</option>
-                    <option value="Visa Gold">Visa Gold</option>
-                    <option value="Visa Platinum">Visa Platinum</option>
-                    <option value="Visa Signature">Visa Signature</option>
-                    <option value="Visa Infinite">Visa Infinite</option>
-                </optgroup>
-                <optgroup label="Mastercard">
-                    <option value="Mastercard Standard">Mastercard Standard</option>
-                    <option value="Mastercard Platinum">Mastercard Platinum</option>
-                    <option value="Mastercard World">Mastercard World</option>
-                    <option value="Mastercard World Elite">Mastercard World Elite</option>
-                </optgroup>
+                <optgroup label="RuPay"><option value="RuPay Platinum">RuPay Platinum</option><option value="RuPay Select">RuPay Select</option></optgroup>
+                <optgroup label="Visa"><option value="Visa Platinum">Visa Platinum</option><option value="Visa Signature">Visa Signature</option><option value="Visa Infinite">Visa Infinite</option></optgroup>
+                <optgroup label="Mastercard"><option value="Mastercard World">Mastercard World</option><option value="Mastercard World Elite">Mastercard World Elite</option></optgroup>
             </select>
             <input type="tel" id="num" placeholder="Card Number" maxlength="19" inputmode="numeric">
             <input type="text" id="name" placeholder="Cardholder Name">
@@ -133,9 +116,10 @@
             <button class="btn btn-ghost" onclick="toggleAddForm()" style="background:#94a3b8;">Cancel</button>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 1.2rem;">
-            <button class="btn btn-ghost" onclick="exportData()" style="font-size:0.75rem;">📦 Backup</button>
-            <button class="btn btn-danger" onclick="location.reload()" style="font-size:0.75rem;">🔒 Lock</button>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top: 1.2rem;">
+            <button class="btn btn-ghost" onclick="toggleSettings()" style="font-size:0.7rem;">⚙️ Settings</button>
+            <button class="btn btn-ghost" onclick="exportData()" style="font-size:0.7rem;">📦 Backup</button>
+            <button class="btn btn-danger" onclick="location.reload()" style="font-size:0.7rem;">🔒 Lock</button>
         </div>
     </div>
 </div>
@@ -143,14 +127,22 @@
 <script>
     let MASTER_KEY = "";
 
+    // Input Formatters
     document.getElementById('num').addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
         e.target.value = v ? v.join(' ') : '';
     });
+
     document.getElementById('exp').addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, '');
+        if (v.length >= 2) {
+            let month = parseInt(v.substring(0, 2));
+            if (month > 12) v = '12' + v.substring(2);
+            if (month === 0) v = '01' + v.substring(2);
+        }
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
+
     document.getElementById('cvv').addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
     });
@@ -172,24 +164,27 @@
         const display = document.getElementById('cardDisplay');
         const btn = document.getElementById('actionBtn');
         if (!id) { display.innerHTML = ""; btn.innerText = "+ Add New Card"; return; }
+        
         const card = getCards().find(c => c.id == id);
         btn.innerText = "Edit " + card.nick;
+        
         let theme = card.type.includes("RuPay") ? "card-rupay" : 
                     card.type.includes("Infinite") ? "card-infinite" : 
                     card.type.includes("Platinum") ? "card-platinum" : 
                     card.type.includes("Gold") ? "card-gold" : "";
+
         display.innerHTML = `
             <div class="credit-card ${theme}">
                 <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
-                <div class="card-number" onclick="copy('${card.num}')">${card.num}</div>
+                <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
                 <div class="card-footer">
-                    <div class="info-group" onclick="copy('${card.name}')"><span class="label">Holder</span><span class="val">${card.name}</span></div>
-                    <div class="info-group" onclick="copy('${card.exp}')"><span class="label">Exp</span><span class="val">${card.exp}</span></div>
-                    <div class="info-group" onclick="copy('${card.cvv}')"><span class="label">CVV</span><span class="val">***</span></div>
+                    <div class="info-group" onclick="copy('${card.name}', 'Name Copied')"><span class="label">Holder</span><span class="val">${card.name}</span></div>
+                    <div class="info-group" onclick="copy('${card.exp}', 'Expiry Copied')"><span class="label">Exp</span><span class="val">${card.exp}</span></div>
+                    <div class="info-group" onclick="copy('${card.cvv}', 'CVV Copied')"><span class="label">CVV</span><span class="val">***</span></div>
                 </div>
             </div>
             <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-top:5px;">
-                <button class="btn btn-ghost" onclick="copy('Num: ${card.num}\\nExp: ${card.exp}\\nCVV: ${card.cvv}\\nName: ${card.name}')" style="font-size:0.7rem;">📋 Copy Details</button>
+                <button class="btn btn-ghost" onclick="copy('👤 Name: ${card.name}\\n💳 Card: ${card.nick}\\n🔢 Number: ${card.num}\\n📅 Exp: ${card.exp}\\n🔑 CVV: ${card.cvv}', 'Details Copied')" style="font-size:0.7rem;">📋 Copy Formatted</button>
                 <button class="btn btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.7rem;">Del</button>
             </div>
         `;
@@ -198,7 +193,7 @@
     function saveCard() {
         const editId = document.getElementById('editId').value;
         const card = { id: editId ? parseInt(editId) : Date.now(), nick: document.getElementById('nick').value, type: document.getElementById('type').value, num: document.getElementById('num').value, name: document.getElementById('name').value, exp: document.getElementById('exp').value, cvv: document.getElementById('cvv').value };
-        if(!card.nick || !card.num) return alert("Fill required fields");
+        if(!card.nick || !card.num || card.exp.length < 5) return alert("Fill all fields correctly!");
         let cards = getCards();
         if (editId) cards[cards.findIndex(c => c.id == editId)] = card; else cards.push(card);
         localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString());
@@ -219,24 +214,60 @@
         }
     }
 
-    function deleteCard(id) { if(confirm("Delete card?")) { let c = getCards().filter(x => x.id != id); localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(c), MASTER_KEY).toString()); updateDropdown(); handleSelection(); } }
-    function getCards() { const d = localStorage.getItem('vault_data'); try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } catch(e) { return []; } }
-    
-    // UPDATED: Sorted alphabetical dropdown
-    function updateDropdown() { 
-        const s = document.getElementById('cardSelector'); 
-        const c = getCards();
-        
-        // Sort cards by Nickname alphabetically
-        c.sort((a, b) => a.nick.localeCompare(b.nick));
-        
-        s.innerHTML = '<option value="">-- Choose Card --</option>' + 
-                      c.map(x => `<option value="${x.id}">${x.nick}</option>`).join(''); 
+    function toggleSettings() {
+        document.getElementById('settingsSection').classList.toggle('hidden');
+        ['cardSelector', 'cardDisplay', 'actionBtn'].forEach(id => document.getElementById(id).classList.toggle('hidden'));
     }
 
-    function copy(t) { navigator.clipboard.writeText(t); const toast = document.getElementById('toast'); toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 1200); }
-    function exportData() { const blob = new Blob([JSON.stringify({data: localStorage.getItem('vault_data'), hash: localStorage.getItem('vault_hash')})], {type:"text/plain"}); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "vault_backup.txt"; a.click(); }
-    function importData(i) { const r = new FileReader(); r.onload = (e) => { const j = JSON.parse(e.target.result); localStorage.setItem('vault_data', j.data); localStorage.setItem('vault_hash', j.hash); location.reload(); }; r.readAsText(i.files[0]); }
+    function changePassword() {
+        const curr = document.getElementById('currPass').value;
+        const next = document.getElementById('newPass').value;
+        if (CryptoJS.SHA256(curr).toString() !== localStorage.getItem('vault_hash')) return alert("Current password wrong!");
+        if (next.length < 4) return alert("New password too short!");
+        
+        if (confirm("Re-encrypt all data with new password?")) {
+            const cards = getCards();
+            localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), next).toString());
+            localStorage.setItem('vault_hash', CryptoJS.SHA256(next).toString());
+            alert("Password updated! Log in again.");
+            location.reload();
+        }
+    }
+
+    function deleteCard(id) { if(confirm("Delete card?")) { let c = getCards().filter(x => x.id != id); localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(c), MASTER_KEY).toString()); updateDropdown(); handleSelection(); } }
+    
+    function getCards() { 
+        const d = localStorage.getItem('vault_data'); 
+        try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } catch(e) { return []; } 
+    }
+    
+    function updateDropdown() { 
+        const s = document.getElementById('cardSelector'); 
+        const c = getCards().sort((a, b) => a.nick.localeCompare(b.nick));
+        s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x => `<option value="${x.id}">${x.nick}</option>`).join(''); 
+    }
+
+    function copy(t, label = "Copied!") { 
+        navigator.clipboard.writeText(t); 
+        const toast = document.getElementById('toast'); 
+        toast.innerText = label; toast.style.opacity = '1'; 
+        setTimeout(() => toast.style.opacity = '0', 1200); 
+    }
+
+    function exportData() { 
+        const blob = new Blob([JSON.stringify({data: localStorage.getItem('vault_data'), hash: localStorage.getItem('vault_hash')})], {type:"text/plain"});
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "vault_backup.txt"; a.click(); 
+    }
+
+    function importData(i) { 
+        const r = new FileReader(); 
+        r.onload = (e) => { 
+            const j = JSON.parse(e.target.result); 
+            localStorage.setItem('vault_data', j.data); 
+            localStorage.setItem('vault_hash', j.hash); 
+            location.reload(); 
+        }; r.readAsText(i.files[0]); 
+    }
 </script>
 </body>
 </html>
