@@ -6,69 +6,30 @@
     <title>Secure Card Vault</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        :root { 
-            --primary: #2563eb; 
-            --bg: #f3f4f6; 
-            --container-bg: #ffffff;
-            --text-main: #1f2937; 
-            --input-border: #d1d5db;
-            --btn-ghost: #64748b;
-            --danger: #dc2626;
-        }
-        
-        body { 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            background: var(--bg); color: var(--text-main); 
-            margin: 0; padding: 0; display: flex; 
-            align-items: center; justify-content: center; min-height: 100dvh; 
-        }
-
-        .container { 
-            width: calc(100% - 40px); max-width: 380px; 
-            background: var(--container-bg); padding: 2rem 1.5rem; 
-            border-radius: 2rem; text-align: center; 
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
-        }
-
-        h2 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem; font-weight: 700; }
-
-        .credit-card { 
-            width: 100%; aspect-ratio: 1.58 / 1; border-radius: 1.25rem; 
-            padding: 1.2rem; margin: 1rem 0; position: relative;
-            background: #111827; color: white; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: space-between;
-            box-sizing: border-box; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        
-        .card-infinite { background: linear-gradient(135deg, #0f172a 0%, #000 100%); border: 1px solid #92400e; }
-        .card-platinum { background: linear-gradient(135deg, #e5e7eb 0%, #94a3b8 100%); color: #111827 !important; }
+        :root { --primary: #2563eb; --bg: #f3f4f6; --container-bg: #ffffff; --text-main: #1f2937; --input-border: #d1d5db; --btn-ghost: #64748b; --danger: #dc2626; --success: #16a34a; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100dvh; }
+        .container { width: calc(100% - 40px); max-width: 380px; background: var(--container-bg); padding: 2rem 1.5rem; border-radius: 2rem; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05); box-sizing: border-box; }
+        h2 { margin-top: 0; margin-bottom: 1.5rem; font-size: 1.4rem; }
+        .credit-card { width: 100%; aspect-ratio: 1.58 / 1; border-radius: 1.25rem; padding: 1.2rem; margin: 1rem 0; background: #111827; color: white; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .card-infinite, .card-world-elite { background: linear-gradient(135deg, #0f172a 0%, #000 100%); border: 1px solid #92400e; }
+        .card-platinum, .card-signature, .card-world { background: linear-gradient(135deg, #e5e7eb 0%, #94a3b8 100%); color: #111827 !important; }
         .card-rupay { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); border: 1px solid #34d399; }
         .card-gold { background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); }
-
-        .card-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
         .card-chip { width: 40px; height: 28px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 4px; }
-        .card-type-tag { font-weight: bold; font-style: italic; font-size: 0.75rem; }
-        .card-number { font-family: 'monospace'; font-size: 1.2rem; letter-spacing: 2px; text-align: center; white-space: nowrap; cursor: pointer; margin: auto 0; }
-
-        .card-footer { display: grid; grid-template-columns: 2fr 1fr 0.8fr; gap: 5px; text-align: left; align-items: flex-end; width: 100%; }
+        .card-type-tag { font-weight: bold; font-style: italic; font-size: 0.7rem; }
+        .card-number { font-family: 'monospace'; font-size: 1.2rem; letter-spacing: 2px; cursor: pointer; margin: auto 0; }
+        .card-footer { display: grid; grid-template-columns: 2fr 1.2fr 0.8fr; gap: 5px; text-align: left; font-size: 0.8rem; }
         .label { font-size: 0.5rem; text-transform: uppercase; opacity: 0.7; display: block; }
-        .val { font-family: 'monospace'; font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        input, select { 
-            width: 100%; padding: 0.8rem; border-radius: 0.75rem; margin: 0.4rem 0; 
-            background: #fff; color: var(--text-main); border: 1px solid var(--input-border); 
-            box-sizing: border-box; font-size: 1rem;
-        }
-
-        .btn { width: 100%; padding: 0.8rem; border-radius: 0.7rem; font-weight: 600; cursor: pointer; border: none; margin-top: 0.5rem; }
+        input, select { width: 100%; padding: 0.8rem; border-radius: 0.75rem; margin: 0.4rem 0; border: 1px solid var(--input-border); box-sizing: border-box; font-size: 1rem; }
+        .btn { width: 100%; padding: 0.8rem; border-radius: 0.7rem; font-weight: 600; cursor: pointer; border: none; margin-top: 0.5rem; transition: 0.2s; }
         .btn-blue { background: var(--primary); color: white; }
-        .btn-light { background: #eff6ff; color: var(--primary); }
+        .btn-green { background: var(--success); color: white; }
         .btn-ghost { background: var(--btn-ghost); color: white; }
         .btn-danger { background: var(--danger); color: white; }
         .hidden { display: none; }
-
         #toast { position: fixed; top: 2rem; left: 50%; transform: translateX(-50%); background: #1f2937; color: white; padding: 0.7rem 1.2rem; border-radius: 2rem; opacity: 0; transition: 0.3s; z-index: 100; pointer-events: none; font-size: 0.8rem; }
+        .rk-display { background: #f8fafc; border: 1px dashed var(--primary); padding: 10px; border-radius: 10px; font-family: monospace; font-weight: bold; margin: 10px 0; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -76,47 +37,77 @@
 <div id="toast">Copied!</div>
 
 <div class="container">
-    <h2>🔐 Secure Vault</h2>
+    <h2>🔐 Secure Card Vault</h2>
     
-    <div id="unlockSection" style="width: 100%;">
+    <div id="unlockSection" style="width:100%">
         <input type="password" id="masterPass" placeholder="Master Password">
         <button class="btn btn-blue" onclick="unlockVault()">Unlock Vault</button>
         <button class="btn btn-ghost" onclick="document.getElementById('importFile').click()">📂 Import Backup</button>
         <input type="file" id="importFile" class="hidden" onchange="importData(this)">
+        <p id="forgotLink" class="hidden" style="color:var(--primary); font-size:0.8rem; cursor:pointer; margin-top:10px;" onclick="showRecovery()">Forgot Password?</p>
+    </div>
+
+    <div id="recoverySection" class="hidden" style="width:100%">
+        <p style="font-size:0.8rem">Enter Recovery Key to Reset Access:</p>
+        <input type="text" id="rkInput" placeholder="XXXX-XXXX-XXXX-XXXX">
+        <button class="btn btn-danger" onclick="handleRecovery()">Reset Access</button>
+        <button class="btn btn-ghost" onclick="location.reload()">Cancel</button>
     </div>
 
     <div id="mainContent" class="hidden" style="width: 100%;">
         <select id="cardSelector" onchange="handleSelection()"></select>
-        <div id="cardDisplay" style="width: 100%;"></div>
-        <button class="btn btn-light" id="actionBtn" onclick="toggleAddForm()">+ Add New Card</button>
+        <div id="cardDisplay"></div>
+        <button class="btn btn-blue" id="actionBtn" onclick="handleMainAction()">+ Add New Card</button>
 
-        <div id="settingsSection" class="hidden" style="width: 100%; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; padding-top: 1rem;">
-            <h3 style="font-size: 1rem;">Change Master Password</h3>
-            <input type="password" id="currPass" placeholder="Current Password">
-            <input type="password" id="newPass" placeholder="New Password">
-            <button class="btn btn-blue" onclick="changePassword()">Update Password</button>
-            <button class="btn btn-ghost" onclick="toggleSettings()">Cancel</button>
+        <div id="settingsSection" class="hidden" style="border-top:1px solid #eee; margin-top:15px; padding-top:10px;">
+            <h3>Security Settings</h3>
+            <input type="password" id="settCurrPass" placeholder="Current Password">
+            <input type="password" id="settNewPass" placeholder="New Password">
+            <button class="btn btn-blue" onclick="changePassword()">Change Password</button>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+            <div id="rkBox" class="hidden">
+                <div class="rk-display" id="rkVal"></div>
+                <button class="btn btn-ghost" onclick="copy(document.getElementById('rkVal').innerText, 'Key Copied!')" style="font-size: 0.7rem;">📋 Copy Key</button>
+            </div>
+            <button class="btn btn-green" onclick="generateAndSaveRK()" id="rkBtn">Generate Recovery Key</button>
+            <button class="btn btn-ghost" onclick="toggleSettings()" style="margin-top: 15px;">Close Settings</button>
         </div>
 
         <div id="addForm" class="hidden">
             <input type="hidden" id="editId">
-            <input type="text" id="nick" placeholder="Nickname">
+            <input type="text" id="nick" placeholder="Nickname (e.g., SBI Prime)">
             <select id="type">
-                <optgroup label="RuPay"><option value="RuPay Platinum">RuPay Platinum</option><option value="RuPay Select">RuPay Select</option></optgroup>
-                <optgroup label="Visa"><option value="Visa Platinum">Visa Platinum</option><option value="Visa Signature">Visa Signature</option><option value="Visa Infinite">Visa Infinite</option></optgroup>
-                <optgroup label="Mastercard"><option value="Mastercard World">Mastercard World</option><option value="Mastercard World Elite">Mastercard World Elite</option></optgroup>
+                <optgroup label="RuPay">
+                    <option value="RuPay Classic">RuPay Classic</option>
+                    <option value="RuPay Platinum">RuPay Platinum</option>
+                    <option value="RuPay Select">RuPay Select (Premium)</option>
+                </optgroup>
+                <optgroup label="Visa">
+                    <option value="Visa Classic">Visa Classic</option>
+                    <option value="Visa Gold">Visa Gold</option>
+                    <option value="Visa Platinum">Visa Platinum</option>
+                    <option value="Visa Signature">Visa Signature</option>
+                    <option value="Visa Infinite">Visa Infinite (Luxury)</option>
+                </optgroup>
+                <optgroup label="Mastercard">
+                    <option value="Mastercard Standard">Mastercard Standard</option>
+                    <option value="Mastercard Gold">Mastercard Gold</option>
+                    <option value="Mastercard Platinum">Mastercard Platinum</option>
+                    <option value="Mastercard World">Mastercard World</option>
+                    <option value="Mastercard World Elite">Mastercard World Elite (Luxury)</option>
+                </optgroup>
             </select>
-            <input type="tel" id="num" placeholder="Card Number" maxlength="19" inputmode="numeric">
+            <input type="tel" id="num" placeholder="Card Number" maxlength="19">
             <input type="text" id="name" placeholder="Cardholder Name">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="tel" id="exp" placeholder="MM/YY" maxlength="5" inputmode="numeric">
-                <input type="tel" id="cvv" placeholder="CVV" maxlength="3" inputmode="numeric">
+                <input type="tel" id="exp" placeholder="MM/YY" maxlength="5">
+                <input type="tel" id="cvv" placeholder="CVV" maxlength="3">
             </div>
-            <button class="btn btn-blue" onclick="saveCard()" id="submitBtn">Save Card</button>
-            <button class="btn btn-ghost" onclick="toggleAddForm()" style="background:#94a3b8;">Cancel</button>
+            <button class="btn btn-blue" onclick="saveCard()">Save Card</button>
+            <button class="btn btn-ghost" onclick="toggleAddForm()">Cancel</button>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top: 1.2rem;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px; margin-top: 1.2rem;">
             <button class="btn btn-ghost" onclick="toggleSettings()" style="font-size:0.7rem;">⚙️ Settings</button>
             <button class="btn btn-ghost" onclick="exportData()" style="font-size:0.7rem;">📦 Backup</button>
             <button class="btn btn-danger" onclick="location.reload()" style="font-size:0.7rem;">🔒 Lock</button>
@@ -128,146 +119,142 @@
     let MASTER_KEY = "";
 
     // Input Formatters
-    document.getElementById('num').addEventListener('input', (e) => {
+    document.getElementById('num').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
         e.target.value = v ? v.join(' ') : '';
     });
-
-    document.getElementById('exp').addEventListener('input', (e) => {
+    document.getElementById('exp').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length >= 2) {
-            let month = parseInt(v.substring(0, 2));
-            if (month > 12) v = '12' + v.substring(2);
-            if (month === 0) v = '01' + v.substring(2);
+            let m = parseInt(v.substring(0, 2));
+            if (m > 12) v = '12' + v.substring(2);
+            if (m === 0) v = '01' + v.substring(2);
         }
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
 
-    document.getElementById('cvv').addEventListener('input', (e) => {
-        e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
-    });
+    if(localStorage.getItem('vault_hash')) document.getElementById('forgotLink').classList.remove('hidden');
 
     function unlockVault() {
         const pass = document.getElementById('masterPass').value;
         const storedHash = localStorage.getItem('vault_hash');
-        const currentHash = CryptoJS.SHA256(pass).toString();
-        if (storedHash && storedHash !== currentHash) return alert("Wrong password!");
-        if (!storedHash && pass) localStorage.setItem('vault_hash', currentHash);
-        MASTER_KEY = pass;
+        if (!storedHash) {
+            MASTER_KEY = pass;
+            localStorage.setItem('vault_hash', CryptoJS.SHA256(pass).toString());
+            alert("Vault created! Visit Settings to generate your Recovery Key.");
+        } else {
+            if (CryptoJS.SHA256(pass).toString() !== storedHash) return alert("Wrong password!");
+            MASTER_KEY = pass;
+        }
         document.getElementById('unlockSection').classList.add('hidden');
         document.getElementById('mainContent').classList.remove('hidden');
         updateDropdown();
     }
 
-    function handleSelection() {
-        const id = document.getElementById('cardSelector').value;
-        const display = document.getElementById('cardDisplay');
-        const btn = document.getElementById('actionBtn');
-        if (!id) { display.innerHTML = ""; btn.innerText = "+ Add New Card"; return; }
-        
-        const card = getCards().find(c => c.id == id);
-        btn.innerText = "Edit " + card.nick;
-        
-        let theme = card.type.includes("RuPay") ? "card-rupay" : 
-                    card.type.includes("Infinite") ? "card-infinite" : 
-                    card.type.includes("Platinum") ? "card-platinum" : 
-                    card.type.includes("Gold") ? "card-gold" : "";
+    function handleMainAction() { toggleAddForm(!!document.getElementById('cardSelector').value); }
 
-        display.innerHTML = `
-            <div class="credit-card ${theme}">
-                <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
-                <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
-                <div class="card-footer">
-                    <div class="info-group" onclick="copy('${card.name}', 'Name Copied')"><span class="label">Holder</span><span class="val">${card.name}</span></div>
-                    <div class="info-group" onclick="copy('${card.exp}', 'Expiry Copied')"><span class="label">Exp</span><span class="val">${card.exp}</span></div>
-                    <div class="info-group" onclick="copy('${card.cvv}', 'CVV Copied')"><span class="label">CVV</span><span class="val">***</span></div>
-                </div>
-            </div>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:10px; margin-top:5px;">
-                <button class="btn btn-ghost" onclick="copy('👤 Name: ${card.name}\\n💳 Card: ${card.nick}\\n🔢 Number: ${card.num}\\n📅 Exp: ${card.exp}\\n🔑 CVV: ${card.cvv}', 'Details Copied')" style="font-size:0.7rem;">📋 Copy Formatted</button>
-                <button class="btn btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.7rem;">Del</button>
-            </div>
-        `;
-    }
-
-    function saveCard() {
-        const editId = document.getElementById('editId').value;
-        const card = { id: editId ? parseInt(editId) : Date.now(), nick: document.getElementById('nick').value, type: document.getElementById('type').value, num: document.getElementById('num').value, name: document.getElementById('name').value, exp: document.getElementById('exp').value, cvv: document.getElementById('cvv').value };
-        if(!card.nick || !card.num || card.exp.length < 5) return alert("Fill all fields correctly!");
-        let cards = getCards();
-        if (editId) cards[cards.findIndex(c => c.id == editId)] = card; else cards.push(card);
-        localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString());
-        toggleAddForm(); updateDropdown(); document.getElementById('cardSelector').value = card.id; handleSelection();
-    }
-
-    function toggleAddForm() {
-        const form = document.getElementById('addForm');
-        if (form.classList.toggle('hidden')) return;
-        const id = document.getElementById('cardSelector').value;
-        if (id) {
-            const c = getCards().find(x => x.id == id);
-            ['nick','type','num','name','exp','cvv'].forEach(k => document.getElementById(k).value = c[k]);
+    function toggleAddForm(isEdit = false) { 
+        const form = document.getElementById('addForm'); 
+        if (form.classList.toggle('hidden')) return; 
+        if (isEdit) {
+            const c = getCards().find(x => x.id == document.getElementById('cardSelector').value);
             document.getElementById('editId').value = c.id;
+            ['nick','type','num','name','exp','cvv'].forEach(k => document.getElementById(k).value = c[k]);
         } else {
             document.getElementById('editId').value = "";
             ['nick','num','name','exp','cvv'].forEach(k => document.getElementById(k).value = "");
         }
     }
 
-    function toggleSettings() {
-        document.getElementById('settingsSection').classList.toggle('hidden');
-        ['cardSelector', 'cardDisplay', 'actionBtn'].forEach(id => document.getElementById(id).classList.toggle('hidden'));
+    function saveCard() {
+        const editId = document.getElementById('editId').value;
+        const card = { id: editId ? parseInt(editId) : Date.now(), nick: document.getElementById('nick').value, type: document.getElementById('type').value, num: document.getElementById('num').value, name: document.getElementById('name').value, exp: document.getElementById('exp').value, cvv: document.getElementById('cvv').value };
+        if(!card.nick || !card.num || card.exp.length < 5) return alert("Fill all info correctly!");
+        let cards = getCards();
+        if (editId) cards[cards.findIndex(c => c.id == editId)] = card;
+        else cards.push(card);
+        localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString());
+        toggleAddForm(); updateDropdown();
+        document.getElementById('cardSelector').value = card.id; handleSelection();
     }
+
+    function handleSelection() {
+        const id = document.getElementById('cardSelector').value;
+        const display = document.getElementById('cardDisplay');
+        const actionBtn = document.getElementById('actionBtn');
+        if(!id) { display.innerHTML = ""; actionBtn.innerText = "+ Add New Card"; return; }
+        const card = getCards().find(c => c.id == id);
+        actionBtn.innerText = "Edit " + card.nick;
+        let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : card.type.includes("Gold") ? "card-gold" : card.type.includes("RuPay") ? "card-rupay" : "";
+        display.innerHTML = `
+            <div class="credit-card ${theme}">
+                <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
+                <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
+                <div class="card-footer">
+                    <div><span class="label">Holder</span><span class="val">${card.name}</span></div>
+                    <div><span class="label">Exp</span><span class="val">${card.exp}</span></div>
+                    <div><span class="label">CVV</span><span class="val">***</span></div>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 2.5fr 1fr; gap:10px; margin-top:5px;">
+                <button class="btn btn-ghost" onclick="copy('👤 Name: ${card.name}\\n💳 Card: ${card.nick}\\n🔢 Number: ${card.num}\\n📅 Exp: ${card.exp}\\n🔑 CVV: ${card.cvv}', 'Details Copied')" style="font-size:0.75rem;">📋 Copy Formatted</button>
+                <button class="btn btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.75rem;">Delete</button>
+            </div>`;
+    }
+
+    function deleteCard(id) { if(confirm("Delete permanently?")) { let cards = getCards().filter(c => c.id != id); localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString()); updateDropdown(); handleSelection(); } }
+    function getCards() { const d = localStorage.getItem('vault_data'); try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } catch(e) { return []; } }
+    function updateDropdown() { const s = document.getElementById('cardSelector'); const c = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x=>`<option value="${x.id}">${x.nick}</option>`).join(''); }
+    function toggleSettings() { document.getElementById('settingsSection').classList.toggle('hidden'); ['cardSelector', 'cardDisplay', 'actionBtn'].forEach(id => document.getElementById(id).classList.toggle('hidden')); }
+    function copy(t, l) { navigator.clipboard.writeText(t); const toast = document.getElementById('toast'); toast.innerText = l; toast.style.opacity = '1'; setTimeout(() => toast.style.opacity = '0', 1200); }
 
     function changePassword() {
-        const curr = document.getElementById('currPass').value;
-        const next = document.getElementById('newPass').value;
-        if (CryptoJS.SHA256(curr).toString() !== localStorage.getItem('vault_hash')) return alert("Current password wrong!");
-        if (next.length < 4) return alert("New password too short!");
-        
-        if (confirm("Re-encrypt all data with new password?")) {
-            const cards = getCards();
-            localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), next).toString());
-            localStorage.setItem('vault_hash', CryptoJS.SHA256(next).toString());
-            alert("Password updated! Log in again.");
+        const curr = document.getElementById('settCurrPass').value;
+        const next = document.getElementById('settNewPass').value;
+        if (CryptoJS.SHA256(curr).toString() !== localStorage.getItem('vault_hash')) return alert("Current password incorrect!");
+        const cards = getCards();
+        localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), next).toString());
+        localStorage.setItem('vault_hash', CryptoJS.SHA256(next).toString());
+        alert("Password updated!"); location.reload();
+    }
+
+    function generateAndSaveRK() {
+        const curr = document.getElementById('settCurrPass').value;
+        if (CryptoJS.SHA256(curr).toString() !== localStorage.getItem('vault_hash')) return alert("Enter current password above first!");
+        let r = ""; const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        for(let i=0; i<16; i++) { if(i>0 && i%4===0) r+="-"; r+=c.charAt(Math.floor(Math.random()*c.length)); }
+        localStorage.setItem('vault_rk', CryptoJS.SHA256(r).toString());
+        document.getElementById('rkVal').innerText = r;
+        document.getElementById('rkBox').classList.remove('hidden');
+        alert("Recovery Key Generated!");
+    }
+
+    function exportData() {
+        const blob = new Blob([JSON.stringify({data:localStorage.getItem('vault_data'), hash:localStorage.getItem('vault_hash'), rk:localStorage.getItem('vault_rk')})], {type:"text/plain"});
+        const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="vault_backup.txt"; a.click();
+    }
+
+    function importData(i) {
+        const r = new FileReader();
+        r.onload = (e) => {
+            const j = JSON.parse(e.target.result);
+            localStorage.setItem('vault_data', j.data);
+            localStorage.setItem('vault_hash', j.hash);
+            localStorage.setItem('vault_rk', j.rk);
+            alert("Import successful! Please log in.");
             location.reload();
-        }
+        };
+        r.readAsText(i.files[0]);
     }
 
-    function deleteCard(id) { if(confirm("Delete card?")) { let c = getCards().filter(x => x.id != id); localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(c), MASTER_KEY).toString()); updateDropdown(); handleSelection(); } }
-    
-    function getCards() { 
-        const d = localStorage.getItem('vault_data'); 
-        try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } catch(e) { return []; } 
-    }
-    
-    function updateDropdown() { 
-        const s = document.getElementById('cardSelector'); 
-        const c = getCards().sort((a, b) => a.nick.localeCompare(b.nick));
-        s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x => `<option value="${x.id}">${x.nick}</option>`).join(''); 
-    }
-
-    function copy(t, label = "Copied!") { 
-        navigator.clipboard.writeText(t); 
-        const toast = document.getElementById('toast'); 
-        toast.innerText = label; toast.style.opacity = '1'; 
-        setTimeout(() => toast.style.opacity = '0', 1200); 
-    }
-
-    function exportData() { 
-        const blob = new Blob([JSON.stringify({data: localStorage.getItem('vault_data'), hash: localStorage.getItem('vault_hash')})], {type:"text/plain"});
-        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "vault_backup.txt"; a.click(); 
-    }
-
-    function importData(i) { 
-        const r = new FileReader(); 
-        r.onload = (e) => { 
-            const j = JSON.parse(e.target.result); 
-            localStorage.setItem('vault_data', j.data); 
-            localStorage.setItem('vault_hash', j.hash); 
-            location.reload(); 
-        }; r.readAsText(i.files[0]); 
+    function showRecovery() { document.getElementById('unlockSection').classList.add('hidden'); document.getElementById('recoverySection').classList.remove('hidden'); }
+    function handleRecovery() {
+        const input = document.getElementById('rkInput').value.trim();
+        if (CryptoJS.SHA256(input).toString() !== localStorage.getItem('vault_rk')) return alert("Invalid Recovery Key!");
+        const next = prompt("Enter New Master Password:");
+        if (next && next.length >= 4) { localStorage.setItem('vault_hash', CryptoJS.SHA256(next).toString()); location.reload(); }
     }
 </script>
 </body>
 </html>
+  
