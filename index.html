@@ -41,7 +41,63 @@
 
 <div class="container">
     <h2>🔐 Secure Card Vault</h2>
-    
+    <!-- ONBOARDING -->
+<div id="onboarding" class="hidden" style="width:100%">
+
+<!-- STEP 1 -->
+<div id="step1">
+
+<h3>👋 Welcome</h3>
+
+<p style="font-size:0.8rem;line-height:1.4">
+Secure Card Vault stores your card details safely on your device.
+</p>
+
+<p style="font-size:0.8rem">
+✔ Encrypted with AES<br>
+✔ Stored only on your phone<br>
+✔ Protected by password & biometrics
+</p>
+
+<button class="btn btn-blue" onclick="nextStep(2)">Get Started</button>
+
+</div>
+
+<!-- STEP 2 -->
+<div id="step2" class="hidden">
+
+<h3>Create Master Password</h3>
+
+<input type="password" id="setupPass" placeholder="Create Password">
+<input type="password" id="setupPass2" placeholder="Confirm Password">
+
+<p style="font-size:0.7rem;color:#64748b">
+⚠ Important:
+If you forget your password AND recovery key,
+your vault cannot be recovered.
+</p>
+
+<button class="btn btn-blue" onclick="createVaultStep()">Continue</button>
+
+</div>
+
+<!-- STEP 3 -->
+<div id="step3" class="hidden">
+
+<h3>Enable Biometrics</h3>
+
+<p style="font-size:0.8rem">
+Use fingerprint or face unlock for quick access.
+</p>
+
+<button class="btn btn-green" onclick="enableBioSetup()">Enable Biometrics</button>
+
+<button class="btn btn-ghost" onclick="finishSetup()">Skip</button>
+
+</div>
+
+</div>
+
     <div id="unlockSection" style="width:100%">
         <input type="password" id="masterPass" placeholder="Master Password">
         <button id="bioUnlockBtn" class="btn btn-green" onclick="unlockWithBiometric()">🔓 Unlock with Biometrics</button>
@@ -125,6 +181,66 @@
 
 <script>
     let MASTER_KEY = "";
+    function nextStep(n){
+
+document.getElementById("step1").classList.add("hidden");
+document.getElementById("step2").classList.add("hidden");
+document.getElementById("step3").classList.add("hidden");
+
+document.getElementById("step"+n).classList.remove("hidden");
+
+}
+function createVaultStep(){
+
+const p1=document.getElementById("setupPass").value;
+const p2=document.getElementById("setupPass2").value;
+
+if(p1.length<4){
+alert("Password must be at least 4 characters");
+return;
+}
+
+if(p1!==p2){
+alert("Passwords do not match");
+return;
+}
+
+MASTER_KEY=p1;
+
+localStorage.setItem(
+"vault_hash",
+CryptoJS.SHA256(p1).toString()
+);
+
+nextStep(3);
+
+}
+async function enableBioSetup(){
+
+try{
+
+await registerBiometric();
+
+finishSetup();
+
+}catch(e){
+
+alert("Biometric setup failed.");
+
+finishSetup();
+
+}
+
+}
+function finishSetup(){
+
+document.getElementById("onboarding").classList.add("hidden");
+document.getElementById("unlockSection").classList.add("hidden");
+document.getElementById("mainContent").classList.remove("hidden");
+
+updateDropdown();
+
+}
 
     // Input Formatters
     document.getElementById('num').addEventListener('input', e => {
@@ -141,7 +257,24 @@
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
 
-    if(localStorage.getItem('vault_hash')) document.getElementById('forgotLink').classList.remove('hidden');
+    window.addEventListener("load", () => {
+
+    const hasVault = localStorage.getItem("vault_hash");
+
+    if (!hasVault) {
+
+        document.getElementById("unlockSection").classList.add("hidden");
+        document.getElementById("onboarding").classList.remove("hidden");
+
+    } else {
+
+        document.getElementById("forgotLink").classList.remove("hidden");
+
+    }
+
+    updateBiometricUI();
+
+});
 
     function unlockVault() {
         const pass = document.getElementById('masterPass').value;
@@ -475,7 +608,7 @@ async function unlockWithBiometric() {
     }
 }
 
-updateBiometricUI();
+
 
 </script>
     <script>
