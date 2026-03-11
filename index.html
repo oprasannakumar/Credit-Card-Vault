@@ -48,15 +48,25 @@
         /* Icons */
         .bio-icon-wrapper { margin-bottom: 2rem; }
         .bio-icon-circle {
-            width: 100px; height: 100px;
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(245, 158, 11, 0.05);
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
-        }
+    width: 110px;
+    height: 110px;
+    border: 1.5px solid rgba(245, 158, 11, 0.4);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 158, 11, 0.05);
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+    margin-bottom: 1rem;
+}
+
+.bio-icon svg {
+    display: block;
+    width: 60px; /* Increased size for "Full" look */
+    height: 60px;
+    color: var(--primary-orange);
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
+}
         .bio-icon { color: var(--primary-orange); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
 #passwordInputArea.hidden {
     display: none !important;
@@ -147,19 +157,128 @@
             outline: none;
         }
         input::placeholder { color: #64748b; }
+.card-chip {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
+    border: 0.5px solid rgba(0,0,0,0.1);
+}
+
+/* Simulating chip circuitry lines */
+.card-chip::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; width: 100%; height: 1px;
+    background: rgba(0,0,0,0.1);
+}
+
+.card-chip::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; width: 1px; height: 100%;
+    background: rgba(0,0,0,0.1);
+}
+
 
         /* Card Visuals */
         .credit-card {
-            width: 100%; aspect-ratio: 1.58 / 1; border-radius: 1.25rem;
-            padding: 1.5rem; margin: 1.5rem 0;
-            display: flex; flex-direction: column; justify-content: space-between;
-            box-sizing: border-box; text-align: left;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-        .card-infinite { background: linear-gradient(135deg, #0f172a, #000); border: 1px solid #92400e; }
-        .card-rupay { background: linear-gradient(135deg, #064e3b, #065f46); }
-        .card-platinum { background: linear-gradient(135deg, #334155, #0f172a); border: 1px solid #475569; }
-        .card-number { font-family: monospace; font-size: 1.3rem; letter-spacing: 2px; }
+    width: 100%;
+    aspect-ratio: 1.58 / 1;
+    border-radius: 20px;
+    padding: 24px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    overflow: hidden;
+    text-align: left;
+}
+
+/* Inner glow to simulate card edge */
+.credit-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+.card-type-tag {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.card-number {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.25rem; /* Slightly reduced to ensure single-line fit */
+    letter-spacing: 2px;
+    margin-top: 5px;
+    white-space: nowrap; /* Prevents wrapping */
+    width: 100%;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+.card-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+.sub-type-top {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+.card-footer-realistic {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column; /* Stack holder and dates vertically */
+    gap: 12px;
+    width: 65%; /* Ensure space for the logo on the right */
+}
+.footer-row {
+    display: flex;
+    gap: 25px; /* Space between Expiry and CVV */
+}
+
+
+.footer-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+footer-item .label {
+    font-size: 0.5rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+
+.footer-item .val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}.footer-item .val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
         .label { font-size: 0.6rem; text-transform: uppercase; opacity: 0.6; }
 
         /* Settings Specials */
@@ -197,6 +316,58 @@
         }
 
         .status-footer { margin-top: 2rem; font-size: 0.75rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .contactless-svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+    margin-left: 10px;
+    color: white;
+}
+.network-logo-container {
+    position: absolute;
+    bottom: 22px;
+    right: 24px;
+    text-align: right;
+    max-width: 30%;
+}
+
+.network-sub-type {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.8;
+    margin-bottom: 2px;
+}
+
+
+.network-main-name {
+    font-size: 1.4rem; /* Balanced size */
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+* {
+    /* Removes the blue/gray tap highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+    
+    /* Prevents the standard text selection UI from appearing on long-press */
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Allow text selection ONLY in input fields so you can still type */
+input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.card-number, .footer-item, .btn-main, .btn-ghost, .btn-danger {
+    /* Ensures cursor looks like a pointer but stays clean */
+    cursor: pointer;
+    outline: none;
+}
+
     </style>
 </head>
 <body>
@@ -295,12 +466,39 @@
         <div id="addForm" class="hidden">
             <input type="hidden" id="editId">
             <input type="text" id="nick" placeholder="Nickname">
-            <select id="type">
-                <option value="Visa Platinum">Visa Platinum</option>
-                <option value="Visa Infinite">Visa Infinite</option>
-                <option value="RuPay Platinum">RuPay Platinum</option>
-                <option value="Mastercard World">Mastercard World</option>
-            </select>
+           <select id="type">
+    <optgroup label="Visa">
+        <option value="Visa Classic">Visa Classic</option>
+        <option value="Visa Gold">Visa Gold</option>
+        <option value="Visa Platinum">Visa Platinum</option>
+        <option value="Visa Signature">Visa Signature</option>
+        <option value="Visa Infinite">Visa Infinite</option>
+    </optgroup>
+    <optgroup label="Mastercard">
+        <option value="Mastercard Standard">Mastercard Standard</option>
+        <option value="Mastercard Gold">Mastercard Gold</option>
+        <option value="Mastercard Platinum">Mastercard Platinum</option>
+        <option value="Mastercard World">Mastercard World</option>
+        <option value="Mastercard World Elite">Mastercard World Elite</option>
+    </optgroup>
+    <optgroup label="RuPay">
+        <option value="RuPay Classic">RuPay Classic</option>
+        <option value="RuPay Platinum">RuPay Platinum</option>
+        <option value="RuPay Select">RuPay Select</option>
+    </optgroup>
+    <optgroup label="American Express">
+        <option value="Amex Green">Amex Green</option>
+        <option value="Amex Gold">Amex Gold</option>
+        <option value="Amex Platinum">Amex Platinum</option>
+        <option value="Amex Centurion">Amex Centurion</option>
+    </optgroup>
+    <optgroup label="Diners Club">
+        <option value="Diners Club Rewardz">Diners Club Rewardz</option>
+        <option value="Diners Club Miles">Diners Club Miles</option>
+        <option value="Diners Club Black">Diners Club Black</option>
+    </optgroup>
+</select>
+
             <input type="tel" id="num" placeholder="Card Number">
             <input type="text" id="name" placeholder="Cardholder Name">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
@@ -549,26 +747,64 @@ function handleSelection() {
     const card = getCards().find(c => c.id == id);
     actionBtn.innerText = "Edit " + card.nick;
     
-    let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : card.type.includes("Gold") ? "card-gold" : card.type.includes("RuPay") ? "card-rupay" : "";
-    
+    // Split "Visa Platinum" -> ["Visa", "Platinum"]
+    const typeParts = card.type.split(' ');
+    const mainBrand = typeParts[0]; 
+    const subType = typeParts.slice(1).join(' '); 
+
+    let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : 
+                card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : 
+                card.type.includes("Gold") ? "card-gold" : "card-rupay";
+
+    let brandColor = card.type.includes("Gold") ? "#fbbf24" : 
+                     (card.type.includes("Platinum") || card.type.includes("Signature")) ? "#cbd5e1" : "#ffffff";
+
     const cardDataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}`;
 
     display.innerHTML = `
         <div class="credit-card ${theme}">
-            <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
-            <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
-            <div class="card-footer">
-                <div><span class="label">Holder</span><span class="val" onclick="copy('${card.name}', '')">${card.name}</span></div>
-                <div><span class="label">Exp</span><span class="val" onclick="copy('${card.exp}', '')">${card.exp}</span></div>
-                <div><span class="label">CVV</span><span class="val" onclick="copy('${card.cvv}', '')">•••</span></div>
+            <div class="card-header-top">
+                <div style="display: flex; align-items: center;">
+                    <div class="card-chip"></div>
+                    <svg class="contactless-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a10 10 0 0 1 14 0"/><path d="M7 10a7 7 0 0 1 10 0"/><path d="M9 12a4 4 0 0 1 6 0"/><path d="M12 15h.01"/></svg>
+                </div>
+                <div class="sub-type-top">${subType}</div>
+            </div>
+            
+            <div class="card-number" style="margin: 18px 0; cursor: pointer;" onclick="copy('${card.num}', 'Number Copied')">
+                ${card.num}
+            </div>
+            
+            <div class="card-footer-realistic">
+                <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.name}', 'Name Copied')">
+                    <span class="label">Card Holder</span>
+                    <span class="val">${card.name || 'PRASANNA KUMAR'}</span>
+                </div>
+                
+                <div class="footer-row">
+                    <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.exp}', 'Expiry Copied')">
+                        <span class="label">Expires</span>
+                        <span class="val">${card.exp}</span>
+                    </div>
+                    <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.cvv}', 'CVV Copied')">
+                        <span class="label">CVV</span>
+                        <span class="val">•••</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="network-logo-container" style="color: ${brandColor}; bottom: 20px;">
+                <span class="network-main-name">${mainBrand}</span>
             </div>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top:10px; margin-bottom:10px;">
-            <button class="btn-ghost" onclick="copy(\`${cardDataString}\`, 'Details Copied')" style="font-size:0.7rem;">📋 Copy</button>
-            <button class="btn-ghost" onclick="shareCard(\`${cardDataString}\`)" style="font-size:0.7rem;">📤 Share</button>
-            <button class="btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.7rem;">🗑️ Delete</button>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top:15px;margin-bottom:10px;">
+            <button class="btn-ghost" onclick="copy(\`${cardDataString}\`, 'All Details Copied')">📋 Copy All</button>
+            <button class="btn-ghost" onclick="shareCard(\`${cardDataString}\`)">📤 Share</button>
+            <button class="btn-danger" onclick="deleteCard(${card.id})">🗑️ Delete</button>
         </div>`;
 }
+
 
 async function shareCard(text) {
     if (navigator.share) {
