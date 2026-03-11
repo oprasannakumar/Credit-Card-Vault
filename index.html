@@ -81,17 +81,45 @@
         }
         .btn-main:active { transform: scale(0.97); }
         
-        .btn-ghost {
-            background: var(--glass);
-            color: white;
-            border: 1px solid var(--glass-border);
-            padding: 0.8rem;
-            border-radius: 12px;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 500;
-            margin-top: 5px;
-        }
+        /* Unified button sizing for ghost and danger buttons */
+.btn-ghost, .btn-danger {
+    height: 30px; /* Fixed height for perfect alignment */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.8rem;
+    border-radius: 6px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+.btn-ghost {
+    background: var(--glass);
+    color: white;
+    border: 1px solid var(--glass-border);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Active states */
+.btn-ghost:active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.97);
+}
+
+.btn-danger:active {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(0.97);
+}
+
 
         .btn-link {
     background: none;
@@ -141,6 +169,25 @@
 #bioUnlockBtn {
     display: flex;
 }
+.unlock-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Adjusting the fingerprint button to be a square matching the height of the main button */
+#bioUnlockBtn {
+    width: 60px; /* Square shape */
+    height: 50px; /* Matches the vertical padding of btn-main */
+    margin-bottom: 10px; /* Match btn-main margin */
+    flex-shrink: 0;
+}
+
+#bioUnlockBtn svg {
+    width: 28px;
+    height: 28px;
+}
 
         #toast {
             position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
@@ -182,30 +229,40 @@
     </div>
 
     <div id="unlockSection">
-        <div class="bio-icon-wrapper">
-            <div class="bio-icon-circle">
-                <span class="bio-icon">
-                    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/><path d="M11 22H13"/><path d="M15 21H17"/><path d="M7 21H9"/></svg>
-                </span>
-            </div>
-        </div>
-        <h2 class="app-title">Card Vault</h2>
-        <p class="sub-text">Securely access your cards</p>
-
-        <div id="passwordInputArea" class="hidden">
-            <input type="password" id="masterPass" placeholder="••••••••">
-            <button class="btn-main" onclick="unlockVault()">Unlock Vault</button>
-        </div>
-
-        <button id="bioUnlockBtn" class="btn-main" onclick="unlockWithBiometric()">Unlock with Biometrics</button>
-        <button class="btn-link" onclick="togglePasswordMode()">Use Password Instead</button>
-        <button id="forgotLink" class="btn-link hidden" onclick="showRecovery()">Forgot Password?</button>
-
-        <div class="status-footer">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Stored locally on this device only
+    <div class="bio-icon-wrapper">
+        <div class="bio-icon-circle">
+            <span class="bio-icon">
+                <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/><path d="M11 22H13"/><path d="M15 21H17"/><path d="M7 21H9"/></svg>
+            </span>
         </div>
     </div>
+    <h2 class="app-title">Card Vault</h2>
+    <p class="sub-text">Securely access your cards</p>
+
+    <input type="password" id="masterPass" placeholder="••••••••">
+
+    <div class="unlock-row">
+        <button class="btn-main" onclick="unlockVault()" style="margin-bottom: 10px;">
+            Unlock Vault
+        </button>
+        
+        <button id="bioUnlockBtn" class="btn-main hidden" onclick="unlockWithBiometric()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
+        </button>
+    </div>
+
+    <button id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
+    
+    <button class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top: 10px;">📂 Import Backup</button>
+    <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
+
+    <div class="status-footer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Stored locally on this device only
+    </div>
+</div>
+
+
 
     <div id="recoverySection" class="hidden">
         <h3>Reset Vault</h3>
@@ -229,9 +286,9 @@
             <div id="rkBox" class="hidden">
                 <div class="rk-display" id="rkVal"></div>
             </div>
-            <button class="btn-ghost" onclick="generateAndSaveRK()" id="rkBtn">Generate Recovery Key</button>
-            <button class="btn-ghost" onclick="registerBiometric()">🔐 Setup Biometrics</button>
-            <button class="btn-ghost" style="color:var(--danger)" onclick="disableBiometric()">❌ Disable Biometrics</button>
+            <button class="btn-link" onclick="generateAndSaveRK()" id="rkBtn">Generate Recovery Key</button>
+            <button class="btn-link" onclick="registerBiometric()">🔐 Setup Biometrics</button>
+            <button class="btn-link" style="color:var(--danger)" onclick="disableBiometric()">❌ Disable Biometrics</button>
             <button class="btn-link" onclick="toggleSettings()">Close Settings</button>
         </div>
 
@@ -268,20 +325,21 @@
     function togglePasswordMode() {
     const passArea = document.getElementById('passwordInputArea');
     const bioBtn = document.getElementById('bioUnlockBtn');
-    const usePassBtn = document.querySelector('button[onclick="togglePasswordMode()"]');
+    const links = document.querySelectorAll('.btn-link'); // "Use Password" and "Forgot Password"
 
     if (passArea.classList.contains('hidden')) {
-        // Switching to Password Mode
+        // Switch to Password Mode
         passArea.classList.remove('hidden');
         bioBtn.classList.add('hidden');
-        usePassBtn.innerText = "Use Biometrics Instead";
+        links[0].innerText = "Use Biometrics Instead";
     } else {
-        // Switching to Biometric Mode
+        // Switch to Biometric Mode
         passArea.classList.add('hidden');
         bioBtn.classList.remove('hidden');
-        usePassBtn.innerText = "Use Password Instead";
+        links[0].innerText = "Use Password Instead";
     }
 }
+
 
 
     function showToast(msg) {
@@ -387,24 +445,20 @@ window.addEventListener("load", () => {
     const bioEnabled = localStorage.getItem("vault_bio_enabled") === "true";
 
     if (!hasVault) {
-        // New user: Show onboarding
         document.getElementById("unlockSection").classList.add("hidden");
         document.getElementById("onboarding").classList.remove("hidden");
     } else {
-        // Returning user: Show unlock screen
         document.getElementById("unlockSection").classList.remove("hidden");
-        document.getElementById("forgotLink").classList.remove("hidden");
         
+        // Show bio icon if enabled and trigger it
         if (bioEnabled) {
-            // Automatically try to unlock with biometrics on page load
+            document.getElementById("bioUnlockBtn").classList.remove("hidden");
             unlockWithBiometric();
-        } else {
-            // If bio is not enabled, default to password view
-            togglePasswordMode();
         }
     }
     updateBiometricUI();
 });
+
 
 
     function unlockVault() {
@@ -438,15 +492,39 @@ window.addEventListener("load", () => {
         }
     }
 function updateBiometricUI() {
-    const bioBtn = document.getElementById("bioUnlockBtn");
-    const enabled = localStorage.getItem("vault_bio_enabled");
+    const bioUnlockBtn = document.getElementById("bioUnlockBtn"); // Main unlock screen button
+    const setupBtn = document.querySelector('button[onclick="registerBiometric()"]'); // Settings button
+    const disableBtn = document.querySelector('button[onclick="disableBiometric()"]'); // Settings button
+    const enabled = localStorage.getItem("vault_bio_enabled") === "true";
 
-    if (enabled === "true") {
-        bioBtn.classList.remove("hidden");
-    } else {
-        bioBtn.classList.add("hidden");
+    // Update Unlock Screen
+    if (bioUnlockBtn) {
+        enabled ? bioUnlockBtn.classList.remove("hidden") : bioUnlockBtn.classList.add("hidden");
+    }
+
+    // Update Settings Screen
+    if (setupBtn && disableBtn) {
+        if (enabled) {
+            setupBtn.classList.add("hidden");
+            disableBtn.classList.remove("hidden");
+        } else {
+            setupBtn.classList.remove("hidden");
+            disableBtn.classList.add("hidden");
+        }
     }
 }
+
+// Share function for the card details
+async function shareCard(text) {
+    if (navigator.share) {
+        try {
+            await navigator.share({ title: 'Card Details', text: text });
+        } catch (err) { console.log("Share failed", err); }
+    } else {
+        copy(text, "Share not supported. Copied instead!");
+    }
+}
+
 
     function saveCard() {
         const editId = document.getElementById('editId').value;
@@ -459,56 +537,71 @@ function updateBiometricUI() {
         toggleAddForm(); updateDropdown();
         document.getElementById('cardSelector').value = card.id; handleSelection();
     }
+function handleSelection() {
+    const id = document.getElementById('cardSelector').value;
+    const display = document.getElementById('cardDisplay');
+    const actionBtn = document.getElementById('actionBtn');
+    if(!id) { display.innerHTML = ""; actionBtn.innerText = "+ Add New Card"; return; }
+    
+    const card = getCards().find(c => c.id == id);
+    actionBtn.innerText = "Edit " + card.nick;
+    
+    let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : card.type.includes("Gold") ? "card-gold" : card.type.includes("RuPay") ? "card-rupay" : "";
+    
+    const cardDataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}`;
 
-    function handleSelection() {
-        const id = document.getElementById('cardSelector').value;
-        const display = document.getElementById('cardDisplay');
-        const actionBtn = document.getElementById('actionBtn');
-        if(!id) { display.innerHTML = ""; actionBtn.innerText = "+ Add New Card"; return; }
-        const card = getCards().find(c => c.id == id);
-        actionBtn.innerText = "Edit " + card.nick;
-        let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : card.type.includes("Gold") ? "card-gold" : card.type.includes("RuPay") ? "card-rupay" : "";
-        display.innerHTML = `
-            <div class="credit-card ${theme}">
-                <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
-                <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
-                <div class="card-footer">
-    <div>
-        <span class="label">Holder</span>
-        <span class="val" style="cursor:pointer;" 
-              onclick="copy('${card.name}', '')">
-            ${card.name}
-        </span>
-    </div>
-
-    <div>
-        <span class="label">Exp</span>
-        <span class="val" style="cursor:pointer;" 
-              onclick="copy('${card.exp}', '')">
-            ${card.exp}
-        </span>
-    </div>
-
-    <div>
-        <span class="label">CVV</span>
-        <span class="val" style="cursor:pointer;" 
-              onclick="copy('${card.cvv}', '')">
-            •••
-        </span>
-    </div>
-</div>
-
+    display.innerHTML = `
+        <div class="credit-card ${theme}">
+            <div class="card-header"><div class="card-chip"></div><div class="card-type-tag">${card.type}</div></div>
+            <div class="card-number" onclick="copy('${card.num}', 'Number Copied')">${card.num}</div>
+            <div class="card-footer">
+                <div><span class="label">Holder</span><span class="val" onclick="copy('${card.name}', '')">${card.name}</span></div>
+                <div><span class="label">Exp</span><span class="val" onclick="copy('${card.exp}', '')">${card.exp}</span></div>
+                <div><span class="label">CVV</span><span class="val" onclick="copy('${card.cvv}', '')">•••</span></div>
             </div>
-            <div style="display:grid; grid-template-columns: 2.5fr 1fr; gap:10px; margin-top:5px;">
-                <button class="btn btn-ghost" onclick="copy('👤 Name: ${card.name}\\n💳 Card: ${card.nick}\\n🔢 Number: ${card.num}\\n📅 Exp: ${card.exp}\\n🔑 CVV: ${card.cvv}', 'Details Copied')" style="font-size:0.75rem;">📋 Copy Formatted</button>
-                <button class="btn btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.75rem;">Delete</button>
-            </div>`;
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-top:10px; margin-bottom:10px;">
+            <button class="btn-ghost" onclick="copy(\`${cardDataString}\`, 'Details Copied')" style="font-size:0.7rem;">📋 Copy</button>
+            <button class="btn-ghost" onclick="shareCard(\`${cardDataString}\`)" style="font-size:0.7rem;">📤 Share</button>
+            <button class="btn-danger" onclick="deleteCard(${card.id})" style="font-size:0.7rem;">🗑️ Delete</button>
+        </div>`;
+}
+
+async function shareCard(text) {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Card Details',
+                text: text
+            });
+        } catch (err) {
+            console.log("Share cancelled or failed", err);
+        }
+    } else {
+        // Fallback for desktop browsers where share API isn't available
+        copy(text, "Sharing not supported, details copied instead!");
     }
+}
+
 
     function deleteCard(id) { if(confirm("Delete permanently?")) { let cards = getCards().filter(c => c.id != id); localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString()); updateDropdown(); handleSelection(); } }
     function getCards() { const d = localStorage.getItem('vault_data'); try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } catch(e) { return []; } }
     function updateDropdown() { const s = document.getElementById('cardSelector'); const c = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); s.innerHTML = '<option value="">-- Choose Card --</option>' + c.map(x=>`<option value="${x.id}">${x.nick}</option>`).join(''); }
-    function toggleSettings() { document.getElementById('settingsSection').classList.toggle('hidden'); ['cardSelector', 'cardDisplay', 'actionBtn'].forEach(id => document.getElementById(id).classList.toggle('hidden')); }
+function toggleSettings() {
+    const settings = document.getElementById('settingsSection');
+    settings.classList.toggle('hidden');
+    
+    // Hide/Show main content
+    ['cardSelector', 'cardDisplay', 'actionBtn', 'bottomNav'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden');
+    });
+
+    // Refresh buttons if opening settings
+    if (!settings.classList.contains('hidden')) {
+        updateBiometricUI();
+    }
+}
+
    function copy(t) {
     navigator.clipboard.writeText(t);
 }
