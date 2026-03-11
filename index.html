@@ -445,19 +445,22 @@ window.addEventListener("load", () => {
     const bioEnabled = localStorage.getItem("vault_bio_enabled") === "true";
 
     if (!hasVault) {
+        // New user: Show onboarding
         document.getElementById("unlockSection").classList.add("hidden");
         document.getElementById("onboarding").classList.remove("hidden");
     } else {
+        // Returning user: Show unlock screen
         document.getElementById("unlockSection").classList.remove("hidden");
         
-        // Show bio icon if enabled and trigger it
+        // Only show the icon if enabled, but DO NOT call unlockWithBiometric()
         if (bioEnabled) {
             document.getElementById("bioUnlockBtn").classList.remove("hidden");
-            unlockWithBiometric();
+        } else {
+            document.getElementById("bioUnlockBtn").classList.add("hidden");
         }
     }
-    updateBiometricUI();
 });
+
 
 
 
