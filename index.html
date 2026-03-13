@@ -375,13 +375,16 @@ input, textarea {
 <div id="toast">Copied!</div>
 
 <div class="container">
-    
+    <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
     <div id="onboarding" class="hidden">
         <div id="step1">
             <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">👋</span></div></div>
             <h3>Secure Vault</h3>
             <p class="sub-text">Encryption at your fingertips. All data stays on your device.</p>
             <button class="btn-main" onclick="nextStep(2)">Get Started</button>
+            <button class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top:10px;">
+              📂 Restore from Backup
+            </button>
         </div>
         <div id="step2" class="hidden">
             <h3>Set Master Password</h3>
@@ -425,7 +428,7 @@ input, textarea {
     <button id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
     
     <button class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top: 10px;">📂 Import Backup</button>
-    <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
+    
 
     <div class="status-footer">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
