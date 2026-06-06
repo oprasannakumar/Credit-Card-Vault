@@ -25,9 +25,9 @@
             color: var(--text-white);
             font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            min-height: 80vh;
+            min-height: 100vh;
             display: flex;
-            align-items: flex-start; /* FIX: Prevents UI from jumping to center */
+            align-items: flex-start;
             justify-content: center;
             overflow-x: hidden;
         }
@@ -38,11 +38,11 @@
             padding: 2rem;
             text-align: center;
             box-sizing: border-box;
-            min-height: 100vh; /* FIX: Ensures it stretches full height */
+            min-height: 100vh;
         }
         
         #onboarding, #unlockSection, #recoverySection {
-            margin-top: 8vh; /* Pushes the login screens down gracefully */
+            margin-top: 8vh;
         }
 
         /* Typography */
@@ -151,12 +151,10 @@
             transition: 0.2s;
             padding-bottom: 4px;
         }
-        .fab:active {
-            transform: scale(0.92);
-        }
+        .fab:active { transform: scale(0.92); }
 
         /* Form Inputs */
-        input, select {
+        input, select, textarea {
             background: var(--glass);
             border: 1px solid var(--glass-border);
             color: white;
@@ -167,8 +165,10 @@
             margin-bottom: 1rem;
             font-size: 1rem;
             outline: none;
+            font-family: inherit;
         }
-        input::placeholder { color: #64748b; }
+        input::placeholder, textarea::placeholder { color: #64748b; }
+        textarea { resize: none; min-height: 80px; }
 
         .card-chip {
             width: 45px;
@@ -181,13 +181,8 @@
             border: 0.5px solid rgba(0,0,0,0.1);
         }
 
-        .card-chip::before {
-            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.1);
-        }
-
-        .card-chip::after {
-            content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.1);
-        }
+        .card-chip::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.1); }
+        .card-chip::after { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.1); }
 
         /* Card Visuals */
         .credit-card {
@@ -222,38 +217,19 @@
         }
 
         .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
-        
-        .sub-type-top {
-            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; font-weight: 600; margin-top: 5px;
-        }
+        .sub-type-top { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; font-weight: 600; margin-top: 5px; }
 
-        .card-footer-realistic {
-            margin-top: auto; display: flex; flex-direction: column; gap: 12px; width: 65%;
-        }
-        
+        .card-footer-realistic { margin-top: auto; display: flex; flex-direction: column; gap: 12px; width: 65%; }
         .footer-row { display: flex; gap: 25px; }
-
         .footer-item { display: flex; flex-direction: column; text-align: left; }
-
         .footer-item .label { font-size: 0.5rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 2px; letter-spacing: 0.5px; }
-
         .footer-item .val { font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
-
-        .label { font-size: 0.6rem; text-transform: uppercase; opacity: 0.6; }
-
-        /* Settings Specials */
-        .rk-display { background: var(--glass); border: 1px dashed var(--primary-orange); padding: 15px; border-radius: 12px; font-family: monospace; font-weight: bold; margin: 15px 0; color: var(--primary-orange); }
 
         .hidden { display: none !important; }
         
         #bioUnlockBtn { display: flex; }
-        
         .unlock-row { display: flex; gap: 12px; align-items: center; width: 100%; }
-
-        #bioUnlockBtn {
-            width: 60px; height: 50px; margin-bottom: 10px; flex-shrink: 0;
-        }
-
+        #bioUnlockBtn { width: 60px; height: 50px; margin-bottom: 10px; flex-shrink: 0; }
         #bioUnlockBtn svg { width: 28px; height: 28px; }
 
         #toast {
@@ -266,66 +242,121 @@
         .status-footer { margin-top: 2rem; font-size: 0.75rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px; }
         
         .contactless-svg { width: 20px; height: 20px; opacity: 0.8; margin-left: 10px; color: white; }
-        
         .network-logo-container { position: absolute; bottom: 22px; right: 24px; text-align: right; max-width: 30%; }
-
         .network-sub-type { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 2px; }
-
         .network-main-name { font-size: 1.4rem; font-weight: 900; font-style: italic; letter-spacing: -0.5px; line-height: 1; }
         
         * { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
-
         input, textarea { -webkit-user-select: text; user-select: text; }
-
-        .card-number, .footer-item, .btn-main, .btn-ghost, .btn-danger { cursor: pointer; outline: none; }
 
         /* Card List Styles */
         .bank-group-title {
-            font-size: 0.8rem;
-            color: var(--primary-orange);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin: 1.5rem 0 0.5rem 0;
-            text-align: left;
-            border-bottom: 1px solid rgba(245, 158, 11, 0.3);
-            padding-bottom: 5px;
-            font-weight: 700;
+            font-size: 0.8rem; color: var(--primary-orange); text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 1.5rem 0 0.5rem 0; text-align: left;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding-bottom: 5px; font-weight: 700;
         }
 
         .card-list-item {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            text-align: left;
-            font-weight: 600;
-            cursor: pointer;
+            background: var(--glass); border: 1px solid var(--glass-border); padding: 1rem;
+            border-radius: 12px; margin-bottom: 10px; text-align: left; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s;
+        }
+        .card-list-item:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.98); }
+
+        /* TOP BAR STYLES */
+        .top-action-bar {
+            position: sticky; top: 0; margin: -2rem -2rem 1.5rem -2rem; padding: 15px 2rem;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 100; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        /* Quick Actions Dock */
+        .quick-actions-dock {
             display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-weight: 600;
             transition: 0.2s;
         }
-
-        .card-list-item:active {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(0.98);
+        .quick-action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: 0.2s;
+        }
+        .quick-action-btn:active .quick-action-icon {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.92);
+        }
+        .qa-danger .quick-action-icon {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
-        /* FIX: SOLID TOP BAR STYLES */
-        .top-action-bar {
-            position: sticky;
-            top: 0; /* Changed to exactly 0 */
-            margin: -2rem -2rem 1.5rem -2rem;
-            padding: 15px 2rem;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 100;
+        /* Clean Notes Widget */
+        .notes-widget {
+            background: var(--glass);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 24px;
+            text-align: left;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .notes-widget:active {
+            background: rgba(255,255,255,0.05);
+        }
+        .notes-title {
+            color: var(--primary-orange);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--glass-border);
+            gap: 6px;
+        }
+        .notes-content {
+            color: white;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        .notes-empty {
+            color: var(--text-dim);
+            font-style: italic;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .secure-lock {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-orange);
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -438,7 +469,7 @@
 
         <div id="addForm" class="hidden">
             <input type="hidden" id="editId">
-            <input type="text" id="nick" placeholder="Nickname">
+            <input type="text" id="nick" placeholder="Nickname (e.g., HDFC Millennia)">
             <select id="type">
                 <optgroup label="Visa">
                     <option value="Visa Classic">Visa Classic</option>
@@ -478,6 +509,9 @@
                 <input type="tel" id="exp" placeholder="MM/YY">
                 <input type="tel" id="cvv" placeholder="CVV">
             </div>
+            
+            <textarea id="notes" placeholder="Secure Notes (e.g., PIN, Bank Phone, Zip Code)"></textarea>
+
             <button class="btn-main" onclick="saveCard()">Save Securely</button>
             <button class="btn-ghost" onclick="toggleAddForm()">Cancel</button>
         </div>
@@ -585,7 +619,7 @@
     }
 
     function handleMainAction() { 
-        document.getElementById('cardSelector').value = ""; // Ensure it's a new card
+        document.getElementById('cardSelector').value = ""; 
         toggleAddForm(false); 
     }
     
@@ -601,30 +635,34 @@
         const display = document.getElementById('cardDisplay');
         
         if (form.classList.contains('hidden')) {
-            // Opening Form
             form.classList.remove('hidden');
             listView.classList.add('hidden');
             display.classList.add('hidden');
-            fab.classList.add('hidden'); // Hide FAB in form
+            fab.classList.add('hidden'); 
             
             if (isEdit) {
                 const id = document.getElementById('cardSelector').value;
                 const c = getCards().find(x => x.id == id);
                 document.getElementById('editId').value = c.id;
-                ['nick','type','num','name','exp','cvv'].forEach(k => document.getElementById(k).value = c[k]);
+                ['nick','type','num','name','exp','cvv','notes'].forEach(k => {
+                    const el = document.getElementById(k);
+                    if (el) el.value = c[k] || '';
+                });
             } else {
                 document.getElementById('editId').value = "";
-                ['nick','num','name','exp','cvv'].forEach(k => document.getElementById(k).value = "");
+                ['nick','num','name','exp','cvv','notes'].forEach(k => {
+                    const el = document.getElementById(k);
+                    if (el) el.value = "";
+                });
             }
         } else {
-            // Closing Form (Cancel/Return)
             form.classList.add('hidden');
             const id = document.getElementById('cardSelector').value;
             if (id) {
-                handleSelection(); // Back to card
+                handleSelection(); 
             } else {
                 listView.classList.remove('hidden');
-                fab.classList.remove('hidden'); // Show FAB in list
+                fab.classList.remove('hidden'); 
             }
         }
     }
@@ -651,7 +689,17 @@
 
     function saveCard() {
         const editId = document.getElementById('editId').value;
-        const card = { id: editId ? parseInt(editId) : Date.now(), nick: document.getElementById('nick').value, type: document.getElementById('type').value, num: document.getElementById('num').value, name: document.getElementById('name').value, exp: document.getElementById('exp').value, cvv: document.getElementById('cvv').value };
+        const card = { 
+            id: editId ? parseInt(editId) : Date.now(), 
+            nick: document.getElementById('nick').value, 
+            type: document.getElementById('type').value, 
+            num: document.getElementById('num').value, 
+            name: document.getElementById('name').value, 
+            exp: document.getElementById('exp').value, 
+            cvv: document.getElementById('cvv').value,
+            notes: document.getElementById('notes').value 
+        };
+        
         if(!card.nick || !card.num || card.exp.length < 5) return alert("Fill all info correctly!");
         
         let cards = getCards();
@@ -671,7 +719,6 @@
         catch(e) { return []; } 
     }
 
-    // --- LIST VIEW LOGIC ---
     function updateDropdown() { 
         const listView = document.getElementById('cardListView'); 
         const cards = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); 
@@ -722,6 +769,61 @@
         handleSelection();
     }
 
+    // --- NEW SECURE ACTION FUNCTIONS --- //
+    async function verifyActionBiometric() {
+        const enabled = localStorage.getItem("vault_bio_enabled");
+        const storedId = localStorage.getItem("vault_bio_id");
+
+        if (enabled === "true" && storedId) {
+            try {
+                const challenge = randomChallenge();
+                const publicKey = {
+                    challenge,
+                    allowCredentials: [{ id: base64ToBuffer(storedId), type: "public-key", transports: ["internal"] }],
+                    userVerification: "required",
+                    timeout: 60000
+                };
+                await navigator.credentials.get({ publicKey });
+                return true; 
+            } catch (err) {
+                showToast("Verification cancelled or failed");
+                return false;
+            }
+        } else {
+            alert("Security Alert: Please enable Biometrics in Settings first to access or share sensitive data like the CVV.");
+            return false;
+        }
+    }
+
+    async function secureCopyCVV(id) {
+        if (await verifyActionBiometric()) {
+            const card = getCards().find(c => c.id == id);
+            copy(card.cvv, 'CVV Copied Securely!');
+        }
+    }
+
+    async function secureCopyAll(id) {
+        if (await verifyActionBiometric()) {
+            const card = getCards().find(c => c.id == id);
+            const dataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}${card.notes ? '\n📝 Notes: ' + card.notes : ''}`;
+            copy(dataString, 'All Details Copied Securely!');
+        }
+    }
+
+    async function secureShare(id) {
+        if (await verifyActionBiometric()) {
+            const card = getCards().find(c => c.id == id);
+            const dataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}${card.notes ? '\n📝 Notes: ' + card.notes : ''}`;
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Card Details', text: dataString }); } 
+                catch (err) { console.log("Share cancelled", err); }
+            } else {
+                copy(dataString, "Sharing not supported. Details copied!");
+            }
+        }
+    }
+    // ----------------------------------- //
+
     function handleSelection() {
         const id = document.getElementById('cardSelector').value;
         const display = document.getElementById('cardDisplay');
@@ -736,7 +838,7 @@
         }
         
         if(listView) listView.classList.add('hidden');
-        if(fab) fab.classList.add('hidden'); // Hide FAB when viewing a card
+        if(fab) fab.classList.add('hidden'); 
         
         const card = getCards().find(c => c.id == id);
         if(!card) return clearSelection();
@@ -752,7 +854,25 @@
         let brandColor = card.type.includes("Gold") ? "#fbbf24" : 
                          (card.type.includes("Platinum") || card.type.includes("Signature")) ? "#cbd5e1" : "#ffffff";
 
-        const cardDataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}`;
+        // Build Notes Widget
+        let notesHtml = '';
+        if (card.notes && card.notes.trim() !== '') {
+            notesHtml = `
+            <div class="notes-widget" onclick="copy(\`${card.notes.replace(/`/g, '\\`')}\`, 'Notes Copied')" title="Tap to copy notes">
+                <div class="notes-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Secure Notes
+                </div>
+                <div class="notes-content">${card.notes.replace(/\n/g, '<br>')}</div>
+            </div>`;
+        } else {
+            notesHtml = `
+            <div class="notes-widget" onclick="editCard(${card.id})">
+                <div class="notes-empty">
+                    No notes saved. Tap Edit to add a PIN, Zip Code, or Support Numbers.
+                </div>
+            </div>`;
+        }
 
         display.innerHTML = `
             <div class="credit-card ${theme}">
@@ -779,9 +899,12 @@
                             <span class="label">Expires</span>
                             <span class="val">${card.exp}</span>
                         </div>
-                        <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.cvv}', 'CVV Copied')">
+                        <div class="footer-item" style="cursor: pointer;" onclick="secureCopyCVV(${card.id})">
                             <span class="label">CVV</span>
-                            <span class="val">•••</span>
+                            <span class="secure-lock">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                Protected
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -791,14 +914,36 @@
                 </div>
             </div>
             
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:15px;margin-bottom:10px;">
-                <button class="btn-ghost" onclick="copy(\`${cardDataString}\`, 'All Details Copied')">📋 Copy All</button>
-                <button class="btn-ghost" onclick="shareCard(\`${cardDataString}\`)">📤 Share</button>
-                <button class="btn-ghost" onclick="editCard(${card.id})">✏️ Edit</button>
-                <button class="btn-danger" onclick="deleteCard(${card.id})">🗑️ Delete</button>
+            <div class="quick-actions-dock">
+                <button class="quick-action-btn" onclick="secureCopyAll(${card.id})">
+                    <div class="quick-action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </div>
+                    Copy
+                </button>
+                <button class="quick-action-btn" onclick="secureShare(${card.id})">
+                    <div class="quick-action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    </div>
+                    Share
+                </button>
+                <button class="quick-action-btn" onclick="editCard(${card.id})">
+                    <div class="quick-action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </div>
+                    Edit
+                </button>
+                <button class="quick-action-btn qa-danger" onclick="deleteCard(${card.id})">
+                    <div class="quick-action-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </div>
+                    Delete
+                </button>
             </div>
+
+            ${notesHtml}
             
-            <button class="btn-ghost" style="margin-bottom:15px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
+            <button class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
                 ⬅️ Back to Card List
             </button>`;
         
@@ -815,15 +960,6 @@
         } 
     }
 
-    async function shareCard(text) {
-        if (navigator.share) {
-            try { await navigator.share({ title: 'Card Details', text: text }); } 
-            catch (err) { console.log("Share cancelled or failed", err); }
-        } else {
-            copy(text, "Sharing not supported, details copied instead!");
-        }
-    }
-
     function toggleSettings() {
         const settings = document.getElementById('settingsSection');
         const isHidden = settings.classList.toggle('hidden');
@@ -831,14 +967,12 @@
         const id = document.getElementById('cardSelector').value;
 
         if (!isHidden) {
-            // Opening settings
             document.getElementById('cardListView').classList.add('hidden');
             document.getElementById('cardDisplay').classList.add('hidden');
             document.getElementById('actionBtn').classList.add('hidden');
             document.getElementById('addForm').classList.add('hidden');
             updateBiometricUI();
         } else {
-            // Closing settings
             if (id) {
                 handleSelection();
             } else {
@@ -918,17 +1052,9 @@
     }
 
     // ===== WebAuthn Helpers =====
-    function bufferToBase64(buffer) {
-        return btoa(String.fromCharCode(...new Uint8Array(buffer)));
-    }
-
-    function base64ToBuffer(base64) {
-        return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-    }
-
-    function randomChallenge() {
-        return Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32)));
-    }
+    function bufferToBase64(buffer) { return btoa(String.fromCharCode(...new Uint8Array(buffer))); }
+    function base64ToBuffer(base64) { return Uint8Array.from(atob(base64), c => c.charCodeAt(0)); }
+    function randomChallenge() { return Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32))); }
 
     // ===== Register Biometric =====
     async function registerBiometric() {
