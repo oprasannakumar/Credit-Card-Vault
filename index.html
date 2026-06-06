@@ -41,9 +41,7 @@
             min-height: 100vh;
         }
         
-        #onboarding, #unlockSection, #recoverySection {
-            margin-top: 8vh;
-        }
+        #onboarding, #unlockSection, #recoverySection, #restoreSection { margin-top: 8vh; }
 
         /* Typography */
         h2, h3 { font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1rem; }
@@ -53,169 +51,101 @@
         /* Icons */
         .bio-icon-wrapper { margin-bottom: 2rem; }
         .bio-icon-circle {
-            width: 110px;
-            height: 110px;
-            border: 1.5px solid rgba(245, 158, 11, 0.4);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(245, 158, 11, 0.05);
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
-            margin-bottom: 1rem;
+            width: 110px; height: 110px; border: 1.5px solid rgba(245, 158, 11, 0.4);
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(245, 158, 11, 0.05); box-shadow: 0 0 30px rgba(245, 158, 11, 0.15); margin-bottom: 1rem;
         }
-
-        .bio-icon svg {
-            display: block;
-            width: 60px;
-            height: 60px;
-            color: var(--primary-orange);
-            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6));
-        }
+        .bio-icon svg { display: block; width: 60px; height: 60px; color: var(--primary-orange); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6)); }
         .bio-icon { color: var(--primary-orange); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
         
         #passwordInputArea.hidden { display: none !important; }
 
         /* Buttons */
         .btn-main {
-            background: var(--primary-orange);
-            color: #000;
-            border: none;
-            padding: 1rem;
-            border-radius: 14px;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-bottom: 10px;
+            background: var(--primary-orange); color: #000; border: none; padding: 1rem;
+            border-radius: 14px; width: 100%; font-size: 1rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; transition: 0.2s; margin-bottom: 10px;
         }
         .btn-main:active { transform: scale(0.97); }
         
         .btn-ghost, .btn-danger {
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 0.8rem;
-            border-radius: 6px;
-            width: 100%;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: 0.2s;
-            box-sizing: border-box;
+            height: 30px; display: flex; align-items: center; justify-content: center;
+            padding: 0 0.8rem; border-radius: 6px; width: 100%; cursor: pointer;
+            font-weight: 500; font-size: 0.9rem; transition: 0.2s; box-sizing: border-box;
         }
-
         .btn-ghost { background: var(--glass); color: white; border: 1px solid var(--glass-border); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-
         .btn-ghost:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.97); }
         .btn-danger:active { background: rgba(239, 68, 68, 0.2); transform: scale(0.97); }
 
-        .btn-link {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            margin-top: 1rem;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            text-decoration: none;
-        }
+        .btn-link { background: none; border: none; color: var(--text-dim); margin-top: 1rem; font-size: 1rem; cursor: pointer; width: 100%; text-decoration: none; }
 
         /* FAB Button Styles */
         .fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            background: var(--primary-orange);
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 300;
-            line-height: 1;
-            border: none;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-            cursor: pointer;
-            z-index: 1000;
-            transition: 0.2s;
-            padding-bottom: 4px;
+            position: fixed; bottom: 2rem; right: 2rem; width: 56px; height: 56px;
+            background: var(--primary-orange); color: #000; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+            font-weight: 300; line-height: 1; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            cursor: pointer; z-index: 1000; transition: 0.2s; padding-bottom: 4px;
         }
         .fab:active { transform: scale(0.92); }
 
+        /* Tabs for Add Form */
+        .form-tabs {
+            display: flex; background: var(--glass); border-radius: 12px; margin-bottom: 1rem; padding: 4px;
+        }
+        .tab-btn {
+            flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer;
+            color: var(--text-dim); font-weight: 600; font-size: 0.9rem; transition: 0.2s; border: none; background: transparent;
+        }
+        .tab-btn.active { background: var(--primary-orange); color: #000; }
+
         /* Form Inputs */
         input, select, textarea {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 1rem;
-            border-radius: 12px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            outline: none;
-            font-family: inherit;
+            background: var(--glass); border: 1px solid var(--glass-border); color: white;
+            padding: 1rem; border-radius: 12px; width: 100%; box-sizing: border-box;
+            margin-bottom: 1rem; font-size: 1rem; outline: none; font-family: inherit;
         }
         input::placeholder, textarea::placeholder { color: #64748b; }
         textarea { resize: none; min-height: 80px; }
+        
+        /* Password Wrapper for Eye Icon */
+        .pwd-wrapper { position: relative; width: 100%; margin-bottom: 1rem; }
+        .pwd-wrapper input { margin-bottom: 0; padding-right: 45px; }
+        .pwd-toggle { 
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text-dim); cursor: pointer;
+            padding: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
+        .pwd-toggle:hover { color: var(--text-white); }
+        
+        /* Specific input grouping for credentials to save space */
+        .cred-group { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 1rem; }
+        .cred-group .pwd-wrapper, .cred-group select { margin-bottom: 0; }
 
         .card-chip {
-            width: 45px;
-            height: 35px;
-            background: linear-gradient(135deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%);
-            border-radius: 6px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-            border: 0.5px solid rgba(0,0,0,0.1);
+            width: 45px; height: 35px; background: linear-gradient(135deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%);
+            border-radius: 6px; margin-bottom: 15px; position: relative; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1);
         }
-
         .card-chip::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.1); }
         .card-chip::after { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.1); }
 
         /* Card Visuals */
         .credit-card {
-            width: 100%;
-            aspect-ratio: 1.58 / 1;
-            border-radius: 20px;
-            padding: 24px;
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-sizing: border-box;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            overflow: hidden;
-            text-align: left;
+            width: 100%; aspect-ratio: 1.58 / 1; border-radius: 20px; padding: 24px; margin: 20px 0;
+            display: flex; flex-direction: column; position: relative; box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); overflow: hidden; text-align: left;
+        }
+        .credit-card::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); pointer-events: none; }
+        
+        .bank-card-visual {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            aspect-ratio: auto; min-height: 140px; justify-content: center; border: 1px solid var(--glass-border);
         }
 
-        .credit-card::after {
-            content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); pointer-events: none;
-        }
-
-        .card-type-tag { font-size: 0.9rem; font-weight: 500; opacity: 0.9; margin-bottom: 30px; }
-
-        .card-number {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.25rem;
-            letter-spacing: 2px;
-            margin-top: 5px;
-            white-space: nowrap;
-            width: 100%;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-
+        .card-number { font-family: 'Courier New', Courier, monospace; font-size: 1.25rem; letter-spacing: 2px; margin-top: 5px; white-space: nowrap; width: 100%; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
         .sub-type-top { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; font-weight: 600; margin-top: 5px; }
 
@@ -233,17 +163,13 @@
         #bioUnlockBtn svg { width: 28px; height: 28px; }
 
         #toast {
-            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-            background: var(--primary-orange); color: black;
-            padding: 0.6rem 1.2rem; border-radius: 20px;
-            font-weight: 600; opacity: 0; transition: 0.3s; z-index: 1000;
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--primary-orange); color: black;
+            padding: 0.6rem 1.2rem; border-radius: 20px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 1000;
         }
 
         .status-footer { margin-top: 2rem; font-size: 0.75rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        
         .contactless-svg { width: 20px; height: 20px; opacity: 0.8; margin-left: 10px; color: white; }
         .network-logo-container { position: absolute; bottom: 22px; right: 24px; text-align: right; max-width: 30%; }
-        .network-sub-type { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 2px; }
         .network-main-name { font-size: 1.4rem; font-weight: 900; font-style: italic; letter-spacing: -0.5px; line-height: 1; }
         
         * { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
@@ -255,7 +181,6 @@
             letter-spacing: 1.5px; margin: 1.5rem 0 0.5rem 0; text-align: left;
             border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding-bottom: 5px; font-weight: 700;
         }
-
         .card-list-item {
             background: var(--glass); border: 1px solid var(--glass-border); padding: 1rem;
             border-radius: 12px; margin-bottom: 10px; text-align: left; font-weight: 600;
@@ -272,92 +197,30 @@
         }
 
         /* Quick Actions Dock */
-        .quick-actions-dock {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 0 10px;
-        }
-        .quick-action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            color: var(--text-dim);
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-        .quick-action-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: 0.2s;
-        }
-        .quick-action-btn:active .quick-action-icon {
-            background: rgba(255,255,255,0.1);
-            transform: scale(0.92);
-        }
-        .qa-danger .quick-action-icon {
-            color: var(--danger);
-            background: rgba(239, 68, 68, 0.05);
-            border-color: rgba(239, 68, 68, 0.2);
-        }
+        .quick-actions-dock { display: flex; justify-content: space-around; margin: 20px 0; padding: 0 10px; }
+        .quick-action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: none; background: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 600; transition: 0.2s; }
+        .quick-action-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s; }
+        .quick-action-btn:active .quick-action-icon { background: rgba(255,255,255,0.1); transform: scale(0.92); }
+        .qa-danger .quick-action-icon { color: var(--danger); background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); }
 
-        /* Clean Notes Widget */
-        .notes-widget {
-            background: var(--glass);
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            margin-bottom: 24px;
-            text-align: left;
-            padding: 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .notes-widget:active {
-            background: rgba(255,255,255,0.05);
-        }
-        .notes-title {
-            color: var(--primary-orange);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .notes-content {
-            color: white;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-        .notes-empty {
-            color: var(--text-dim);
-            font-style: italic;
-            font-size: 0.85rem;
-            text-align: center;
-            padding: 10px 0;
-        }
-        .secure-lock {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--primary-orange);
-            font-size: 0.8rem;
-        }
+        /* Details Widget */
+        .details-widget { background: var(--glass); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 24px; overflow: hidden; text-align: left; }
+        .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: background 0.2s; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-row:active { background: rgba(255,255,255,0.05); }
+        .detail-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
+        .detail-value { color: white; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .mono { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.5px; }
+
+        /* Secure Action Lock */
+        .secure-lock { display: flex; align-items: center; gap: 5px; color: var(--primary-orange); font-size: 0.8rem; }
+        
+        /* Notes Widget */
+        .notes-widget { background: var(--glass); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 24px; text-align: left; padding: 16px; cursor: pointer; transition: background 0.2s; }
+        .notes-widget:active { background: rgba(255,255,255,0.05); }
+        .notes-title { color: var(--primary-orange); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .notes-content { color: white; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
+        .notes-empty { color: var(--text-dim); font-style: italic; font-size: 0.85rem; text-align: center; padding: 10px 0; }
     </style>
 </head>
 <body>
@@ -366,29 +229,40 @@
 
 <div class="container">
     <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
+    
     <div id="onboarding" class="hidden">
         <div id="step1">
             <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">👋</span></div></div>
             <h3>Secure Vault</h3>
             <p class="sub-text">Encryption at your fingertips. All data stays on your device.</p>
-            <button class="btn-main" onclick="nextStep(2)">Get Started</button>
-            <button class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top:10px;">
+            <button type="button" class="btn-main" onclick="nextStep(2)">Get Started</button>
+            <button type="button" class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top:10px;">
               📂 Restore from Backup
             </button>
         </div>
         <div id="step2" class="hidden">
             <h3>Set Master Password</h3>
             <p class="sub-text">This unlocks your vault.</p>
-            <input type="password" id="setupPass" placeholder="Enter Password">
-            <input type="password" id="setupPass2" placeholder="Confirm Password">
-            <button class="btn-main" onclick="createVaultStep()">Continue</button>
+            <div class="pwd-wrapper">
+                <input type="password" id="setupPass" placeholder="Enter Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('setupPass', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+            <div class="pwd-wrapper">
+                <input type="password" id="setupPass2" placeholder="Confirm Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('setupPass2', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+            <button type="button" class="btn-main" onclick="createVaultStep()">Continue</button>
         </div>
         <div id="step3" class="hidden">
             <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">🧬</span></div></div>
             <h3>Biometrics</h3>
             <p class="sub-text">Enable fingerprint access?</p>
-            <button class="btn-main" onclick="enableBioSetup()">Enable Now</button>
-            <button class="btn-link" onclick="finishSetup()">Skip</button>
+            <button type="button" class="btn-main" onclick="enableBioSetup()">Enable Now</button>
+            <button type="button" class="btn-link" onclick="finishSetup()">Skip</button>
         </div>
     </div>
 
@@ -403,35 +277,50 @@
         <h2 class="app-title">Card Vault</h2>
         <p class="sub-text">Securely access your cards</p>
 
-        <input type="password" id="masterPass" placeholder="••••••••">
+        <div class="pwd-wrapper">
+            <input type="password" id="masterPass" placeholder="••••••••">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('masterPass', this)" tabindex="-1">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
 
         <div class="unlock-row">
-            <button class="btn-main" onclick="unlockVault()" style="margin-bottom: 10px;">
+            <button type="button" class="btn-main" onclick="unlockVault()" style="margin-bottom: 10px;">
                 Unlock Vault
             </button>
-            
-            <button id="bioUnlockBtn" class="btn-main hidden" onclick="unlockWithBiometric()">
+            <button type="button" id="bioUnlockBtn" class="btn-main hidden" onclick="unlockWithBiometric()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
             </button>
         </div>
 
-        <button id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
+        <button type="button" id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
+        <button type="button" class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top: 10px;">📂 Import Backup</button>
         
-        <button class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top: 10px;">📂 Import Backup</button>
-        
-
         <div class="status-footer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Stored locally on this device only
         </div>
     </div>
 
+    <div id="restoreSection" class="hidden">
+        <h3>Restore Backup</h3>
+        <p class="sub-text">Enter the password used when this backup was created.</p>
+        <div class="pwd-wrapper">
+            <input type="password" id="restorePass" placeholder="Backup Password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('restorePass', this)" tabindex="-1">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
+        <button type="button" class="btn-main" onclick="confirmRestore()">Restore Data</button>
+        <button type="button" class="btn-link" onclick="cancelRestore()">Cancel</button>
+    </div>
+
     <div id="recoverySection" class="hidden">
         <h3>Reset Vault</h3>
         <p class="sub-text">Enter your 16-character Recovery Key:</p>
         <input type="text" id="rkInput" placeholder="XXXX-XXXX-XXXX-XXXX">
-        <button class="btn-main" onclick="handleRecovery()">Reset Access</button>
-        <button class="btn-link" onclick="location.reload()">Cancel</button>
+        <button type="button" class="btn-main" onclick="handleRecovery()">Reset Access</button>
+        <button type="button" class="btn-link" onclick="location.reload()">Cancel</button>
     </div>
 
     <div id="mainContent" class="hidden">
@@ -439,9 +328,9 @@
         <div class="top-action-bar">
             <h2 style="margin:0; font-size:1.15rem; color:var(--text-white); font-weight:700;">My Vault</h2>
             <div style="display:flex; gap:8px;">
-                <button class="btn-ghost" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="exportData()" title="Backup">📦</button>
-                <button class="btn-ghost" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="toggleSettings()" title="Settings">⚙️</button>
-                <button class="btn-danger" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="location.reload()" title="Lock">🔒</button>
+                <button type="button" class="btn-ghost" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="exportData()" title="Backup">📦</button>
+                <button type="button" class="btn-ghost" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="toggleSettings()" title="Settings">⚙️</button>
+                <button type="button" class="btn-danger" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="location.reload()" title="Lock">🔒</button>
             </div>
         </div>
 
@@ -450,70 +339,138 @@
 
         <div id="cardDisplay"></div>
         
-        <button class="fab" id="actionBtn" onclick="handleMainAction()">+</button>
+        <button type="button" class="fab" id="actionBtn" onclick="handleMainAction()">+</button>
 
         <div id="settingsSection" class="hidden">
             <h3>Security Settings</h3>
-            <input type="password" id="settCurrPass" placeholder="Current Password">
-            <input type="password" id="settNewPass" placeholder="New Password">
-            <button class="btn-main" onclick="changePassword()">Update Password</button>
+            
+            <div class="pwd-wrapper">
+                <input type="password" id="settCurrPass" placeholder="Current Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('settCurrPass', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+            
+            <div class="pwd-wrapper">
+                <input type="password" id="settNewPass" placeholder="New Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('settNewPass', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+            
+            <button type="button" class="btn-main" onclick="changePassword()">Update Password</button>
             
             <div id="rkBox" class="hidden">
                 <div class="rk-display" id="rkVal"></div>
             </div>
-            <button class="btn-link" onclick="generateAndSaveRK()" id="rkBtn">Generate Recovery Key</button>
-            <button class="btn-link" onclick="registerBiometric()">🔐 Setup Biometrics</button>
-            <button class="btn-link" style="color:var(--danger)" onclick="disableBiometric()">❌ Disable Biometrics</button>
-            <button class="btn-link" onclick="toggleSettings()">Close Settings</button>
+            <button type="button" class="btn-link" onclick="generateAndSaveRK()" id="rkBtn">Generate Recovery Key</button>
+            <button type="button" class="btn-link" onclick="registerBiometric()">🔐 Setup Biometrics</button>
+            <button type="button" class="btn-link" style="color:var(--danger)" onclick="disableBiometric()">❌ Disable Biometrics</button>
+            <button type="button" class="btn-link" onclick="toggleSettings()">Close Settings</button>
         </div>
 
         <div id="addForm" class="hidden">
-            <input type="hidden" id="editId">
-            <input type="text" id="nick" placeholder="Nickname (e.g., HDFC Millennia)">
-            <select id="type">
-                <optgroup label="Visa">
-                    <option value="Visa Classic">Visa Classic</option>
-                    <option value="Visa Gold">Visa Gold</option>
-                    <option value="Visa Platinum">Visa Platinum</option>
-                    <option value="Visa Signature">Visa Signature</option>
-                    <option value="Visa Infinite">Visa Infinite</option>
-                </optgroup>
-                <optgroup label="Mastercard">
-                    <option value="Mastercard Standard">Mastercard Standard</option>
-                    <option value="Mastercard Gold">Mastercard Gold</option>
-                    <option value="Mastercard Platinum">Mastercard Platinum</option>
-                    <option value="Mastercard World">Mastercard World</option>
-                    <option value="Mastercard World Elite">Mastercard World Elite</option>
-                </optgroup>
-                <optgroup label="RuPay">
-                    <option value="RuPay Classic">RuPay Classic</option>
-                    <option value="RuPay Platinum">RuPay Platinum</option>
-                    <option value="RuPay Select">RuPay Select</option>
-                </optgroup>
-                <optgroup label="American Express">
-                    <option value="Amex Green">Amex Green</option>
-                    <option value="Amex Gold">Amex Gold</option>
-                    <option value="Amex Platinum">Amex Platinum</option>
-                    <option value="Amex Centurion">Amex Centurion</option>
-                </optgroup>
-                <optgroup label="Diners Club">
-                    <option value="Diners Club Rewardz">Diners Club Rewardz</option>
-                    <option value="Diners Club Miles">Diners Club Miles</option>
-                    <option value="Diners Club Black">Diners Club Black</option>
-                </optgroup>
-            </select>
-
-            <input type="tel" id="num" placeholder="Card Number">
-            <input type="text" id="name" placeholder="Cardholder Name">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="tel" id="exp" placeholder="MM/YY">
-                <input type="tel" id="cvv" placeholder="CVV">
+            <div class="form-tabs">
+                <button type="button" class="tab-btn active" id="tabCard" onclick="switchFormTab('card')">💳 Card</button>
+                <button type="button" class="tab-btn" id="tabBank" onclick="switchFormTab('netbanking')">🏦 NetBanking</button>
             </div>
             
-            <textarea id="notes" placeholder="Secure Notes (e.g., PIN, Bank Phone, Zip Code)"></textarea>
+            <input type="hidden" id="editId">
+            <input type="hidden" id="itemType" value="card">
 
-            <button class="btn-main" onclick="saveCard()">Save Securely</button>
-            <button class="btn-ghost" onclick="toggleAddForm()">Cancel</button>
+            <div id="cardFields">
+                <input type="text" id="nick" placeholder="Nickname (e.g., HDFC Millennia)">
+                <select id="type">
+                    <optgroup label="Visa">
+                        <option value="Visa Classic">Visa Classic</option>
+                        <option value="Visa Platinum">Visa Platinum</option>
+                        <option value="Visa Signature">Visa Signature</option>
+                        <option value="Visa Infinite">Visa Infinite</option>
+                    </optgroup>
+                    <optgroup label="Mastercard">
+                        <option value="Mastercard Standard">Mastercard Standard</option>
+                        <option value="Mastercard World">Mastercard World</option>
+                        <option value="Mastercard World Elite">Mastercard World Elite</option>
+                    </optgroup>
+                    <optgroup label="RuPay">
+                        <option value="RuPay Classic">RuPay Classic</option>
+                        <option value="RuPay Platinum">RuPay Platinum</option>
+                        <option value="RuPay Select">RuPay Select</option>
+                    </optgroup>
+                    <optgroup label="American Express">
+                        <option value="Amex Platinum">Amex Platinum</option>
+                    </optgroup>
+                </select>
+                <input type="tel" id="num" placeholder="Card Number">
+                <input type="text" id="name" placeholder="Cardholder Name">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="tel" id="exp" placeholder="MM/YY">
+                    <input type="tel" id="cvv" placeholder="CVV">
+                </div>
+            </div>
+
+            <div id="bankFields" class="hidden">
+                <input type="text" id="bankNick" placeholder="Bank Name (e.g., HDFC Bank)">
+                <input type="text" id="userId" placeholder="User ID / Customer ID">
+                
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="loginPass" placeholder="Login Password">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('loginPass', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
+                    <select id="loginExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
+                </div>
+                
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="profilePass" placeholder="Profile Password">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('profilePass', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
+                    <select id="profileExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
+                </div>
+
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="mpin" placeholder="MPIN (Mobile App)">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('mpin', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
+                    <select id="mpinExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
+                </div>
+                
+                <input type="text" id="cif" placeholder="CIF Number (Optional)">
+            </div>
+            
+            <textarea id="notes" placeholder="Secure Notes (e.g., ATM PIN, Support numbers)"></textarea>
+
+            <button type="button" class="btn-main" onclick="saveItem()">Save Securely</button>
+            <button type="button" class="btn-ghost" onclick="cancelForm()">Cancel</button>
         </div>
 
     </div>
@@ -521,6 +478,7 @@
 
 <script>
     let MASTER_KEY = "";
+    let pendingRestoreData = null; // Holds the parsed file data securely
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -532,6 +490,31 @@
     function copy(text, msg = "Copied!") {
         navigator.clipboard.writeText(text);
         showToast(msg);
+    }
+    
+    function togglePwd(inputId, btnEl) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            btnEl.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+        } else {
+            input.type = "password";
+            btnEl.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+        }
+    }
+
+    // Helper: Calculate Date dynamically based on timestamp + months
+    function getExpiryString(timestamp, months) {
+        if (!timestamp || !months || months === "0") return null;
+        const d = new Date(timestamp);
+        d.setMonth(d.getMonth() + parseInt(months));
+        
+        const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = mNames[d.getMonth()];
+        const year = d.getFullYear();
+        
+        return `${day}-${month}-${year}`;
     }
 
     function nextStep(n){
@@ -618,6 +601,22 @@
         updateDropdown();
     }
 
+    // --- FORM LOGIC ---
+    function switchFormTab(tab) {
+        document.getElementById('itemType').value = tab;
+        if(tab === 'card') {
+            document.getElementById('tabCard').classList.add('active');
+            document.getElementById('tabBank').classList.remove('active');
+            document.getElementById('cardFields').classList.remove('hidden');
+            document.getElementById('bankFields').classList.add('hidden');
+        } else {
+            document.getElementById('tabBank').classList.add('active');
+            document.getElementById('tabCard').classList.remove('active');
+            document.getElementById('bankFields').classList.remove('hidden');
+            document.getElementById('cardFields').classList.add('hidden');
+        }
+    }
+
     function handleMainAction() { 
         document.getElementById('cardSelector').value = ""; 
         toggleAddForm(false); 
@@ -627,44 +626,532 @@
         document.getElementById('cardSelector').value = id;
         toggleAddForm(true);
     }
+    
+    function resetPasswordIcons() {
+        document.querySelectorAll('.pwd-wrapper input').forEach(el => {
+            el.type = 'password';
+            if(el.nextElementSibling) {
+                el.nextElementSibling.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            }
+        });
+    }
+
+    // Separated explicitly for Cancel button
+    function cancelForm() {
+        resetPasswordIcons();
+        document.getElementById('addForm').classList.add('hidden');
+        const id = document.getElementById('cardSelector').value;
+        if (id) {
+            handleSelection(); 
+        } else {
+            document.getElementById('cardListView').classList.remove('hidden');
+            document.getElementById('actionBtn').classList.remove('hidden'); 
+        }
+    }
 
     function toggleAddForm(isEdit = false) { 
         const form = document.getElementById('addForm'); 
         const listView = document.getElementById('cardListView');
         const fab = document.getElementById('actionBtn');
         const display = document.getElementById('cardDisplay');
+        const formTabs = document.querySelector('.form-tabs');
         
-        if (form.classList.contains('hidden')) {
-            form.classList.remove('hidden');
-            listView.classList.add('hidden');
-            display.classList.add('hidden');
-            fab.classList.add('hidden'); 
+        resetPasswordIcons(); // Ensures eyes are closed when form opens
+        
+        // Always handles opening/setting state now
+        form.classList.remove('hidden');
+        listView.classList.add('hidden');
+        display.classList.add('hidden');
+        fab.classList.add('hidden'); 
+        
+        if (isEdit === true) {
+            if (formTabs) formTabs.classList.add('hidden'); // Hide the tabs so they can't switch types in edit mode
+
+            const id = document.getElementById('cardSelector').value;
+            const c = getCards().find(x => x.id == id);
+            document.getElementById('editId').value = c.id;
             
-            if (isEdit) {
-                const id = document.getElementById('cardSelector').value;
-                const c = getCards().find(x => x.id == id);
-                document.getElementById('editId').value = c.id;
+            const type = c.itemType || 'card';
+            switchFormTab(type);
+
+            if(type === 'card') {
                 ['nick','type','num','name','exp','cvv','notes'].forEach(k => {
                     const el = document.getElementById(k);
                     if (el) el.value = c[k] || '';
                 });
             } else {
-                document.getElementById('editId').value = "";
-                ['nick','num','name','exp','cvv','notes'].forEach(k => {
+                document.getElementById('bankNick').value = c.nick || '';
+                ['userId','loginPass','loginExp','profilePass','profileExp','mpin','mpinExp','cif','notes'].forEach(k => {
                     const el = document.getElementById(k);
-                    if (el) el.value = "";
+                    if (el) {
+                        if (k.includes('Exp')) el.value = c[k] || '0';
+                        else el.value = c[k] || '';
+                    }
                 });
             }
         } else {
-            form.classList.add('hidden');
-            const id = document.getElementById('cardSelector').value;
-            if (id) {
-                handleSelection(); 
+            if (formTabs) formTabs.classList.remove('hidden'); // Restore tabs for new entries
+            
+            document.getElementById('editId').value = "";
+            switchFormTab('card');
+            ['nick','num','name','exp','cvv','bankNick','userId','loginPass','profilePass','mpin','cif','notes'].forEach(k => {
+                const el = document.getElementById(k);
+                if (el) el.value = "";
+            });
+            ['loginExp','profileExp','mpinExp'].forEach(k => {
+                const el = document.getElementById(k);
+                if (el) el.value = "0";
+            });
+        }
+    }
+
+    function saveItem() {
+        const editId = document.getElementById('editId').value;
+        const typeVal = document.getElementById('itemType').value;
+        let item = { 
+            id: editId ? parseInt(editId) : Date.now(), 
+            itemType: typeVal,
+            notes: document.getElementById('notes').value 
+        };
+
+        if(typeVal === 'card') {
+            item.nick = document.getElementById('nick').value;
+            item.type = document.getElementById('type').value;
+            item.num = document.getElementById('num').value;
+            item.name = document.getElementById('name').value;
+            item.exp = document.getElementById('exp').value;
+            item.cvv = document.getElementById('cvv').value;
+            if(!item.nick || !item.num || item.exp.length < 5) return alert("Fill required card info!");
+        } else {
+            item.nick = document.getElementById('bankNick').value;
+            item.userId = document.getElementById('userId').value;
+            
+            item.loginPass = document.getElementById('loginPass').value;
+            item.loginExp = document.getElementById('loginExp').value;
+            
+            item.profilePass = document.getElementById('profilePass').value;
+            item.profileExp = document.getElementById('profileExp').value;
+            
+            item.mpin = document.getElementById('mpin').value;
+            item.mpinExp = document.getElementById('mpinExp').value;
+            
+            item.cif = document.getElementById('cif').value;
+            
+            if(!item.nick || !item.userId) return alert("Bank Name and User ID are required!");
+
+            // Track timestamps intelligently
+            const existingItems = getCards();
+            let oldItem = editId ? existingItems.find(c => c.id == parseInt(editId)) : null;
+
+            item.loginUpdated = (oldItem && oldItem.loginPass === item.loginPass && oldItem.loginUpdated) ? oldItem.loginUpdated : Date.now();
+            item.profileUpdated = (oldItem && oldItem.profilePass === item.profilePass && oldItem.profileUpdated) ? oldItem.profileUpdated : Date.now();
+            item.mpinUpdated = (oldItem && oldItem.mpin === item.mpin && oldItem.mpinUpdated) ? oldItem.mpinUpdated : Date.now();
+        }
+        
+        let items = getCards();
+        if (editId) items[items.findIndex(c => c.id == editId)] = item;
+        else items.push(item);
+        
+        localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(items), MASTER_KEY).toString());
+        
+        resetPasswordIcons();
+        document.getElementById('addForm').classList.add('hidden');
+        updateDropdown();
+        document.getElementById('cardSelector').value = item.id;
+        handleSelection();
+    }
+
+    function getCards() { 
+        const d = localStorage.getItem('vault_data'); 
+        try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } 
+        catch(e) { return []; } 
+    }
+
+    // --- LIST VIEW ---
+    function updateDropdown() { 
+        const listView = document.getElementById('cardListView'); 
+        const items = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); 
+        
+        if (items.length === 0) {
+            listView.innerHTML = '<p class="sub-text" style="margin-top:20px;">No items saved yet.</p>';
+            return;
+        }
+
+        const groupedItems = {};
+        items.forEach(item => {
+            let bankName = "";
+            const nickStr = item.nick.trim();
+            if (nickStr.toLowerCase().startsWith("standard chartered")) {
+                bankName = "Standard Chartered";
             } else {
-                listView.classList.remove('hidden');
-                fab.classList.remove('hidden'); 
+                bankName = nickStr.split(" ")[0]; 
+            }
+            bankName = bankName.charAt(0).toUpperCase() + bankName.slice(1);
+            if (!groupedItems[bankName]) groupedItems[bankName] = [];
+            groupedItems[bankName].push(item);
+        });
+
+        let html = '';
+        const sortedBanks = Object.keys(groupedItems).sort((a, b) => a.localeCompare(b));
+        
+        sortedBanks.forEach(bank => {
+            html += `<div class="bank-group-title">${bank}</div>`;
+            groupedItems[bank].forEach(item => {
+                const isBank = item.itemType === 'netbanking';
+                const iconSvg = isBank 
+                    ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-orange)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
+                    : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-orange)"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
+                
+                const label = isBank ? `${item.nick} (NetBanking)` : item.nick;
+
+                html += `
+                <div class="card-list-item" onclick="selectCard(${item.id})">
+                    ${iconSvg}
+                    ${label}
+                </div>`;
+            });
+        });
+
+        listView.innerHTML = html; 
+    }
+
+    function selectCard(id) {
+        document.getElementById('cardSelector').value = id;
+        handleSelection();
+    }
+
+    function clearSelection() {
+        document.getElementById('cardSelector').value = "";
+        handleSelection();
+    }
+
+    // --- SECURE ACTIONS --- //
+    async function verifyActionBiometric() {
+        const enabled = localStorage.getItem("vault_bio_enabled");
+        const storedId = localStorage.getItem("vault_bio_id");
+
+        if (enabled === "true" && storedId) {
+            try {
+                const challenge = randomChallenge();
+                const publicKey = {
+                    challenge,
+                    allowCredentials: [{ id: base64ToBuffer(storedId), type: "public-key", transports: ["internal"] }],
+                    userVerification: "required",
+                    timeout: 60000
+                };
+                await navigator.credentials.get({ publicKey });
+                return true; 
+            } catch (err) {
+                showToast("Verification cancelled");
+                return false;
+            }
+        } else {
+            alert("Security Alert: Please enable Biometrics in Settings first to access protected data.");
+            return false;
+        }
+    }
+
+    async function secureActionAndCopy(text, label) {
+        if (!text) return showToast(`No ${label} saved`);
+
+        const isVerified = await verifyActionBiometric();
+        
+        if (isVerified) {
+            try {
+                const tempArea = document.createElement("textarea");
+                tempArea.value = text;
+                tempArea.style.position = "fixed";
+                tempArea.style.left = "-9999px";
+                document.body.appendChild(tempArea);
+                
+                tempArea.focus();
+                tempArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempArea);
+                
+                if (successful) {
+                    showToast(`${label} Copied Securely!`);
+                } else {
+                    throw new Error("Copy command failed");
+                }
+            } catch (err) {
+                console.error("Clipboard error:", err);
+                const copyFallback = confirm(`${label} could not be copied automatically. Do you want to see the value?`);
+                if (copyFallback) alert(`${label}: ${text}`);
             }
         }
+    }
+
+    async function secureCopyAll(id) {
+        if (await verifyActionBiometric()) {
+            const item = getCards().find(c => c.id == id);
+            if (!item) return;
+
+            let dataString = "";
+            if (item.itemType === 'netbanking') {
+                dataString = `🏦 Bank: ${item.nick}\n👤 User ID: ${item.userId}`;
+                
+                let lExp = getExpiryString(item.loginUpdated, item.loginExp);
+                if (item.loginPass) dataString += `\n🔑 Password: ${item.loginPass}${lExp ? ` (Exp: ${lExp})` : ''}`;
+                
+                let pExp = getExpiryString(item.profileUpdated, item.profileExp);
+                if (item.profilePass) dataString += `\n🔐 Profile Pass: ${item.profilePass}${pExp ? ` (Exp: ${pExp})` : ''}`;
+                
+                let mExp = getExpiryString(item.mpinUpdated, item.mpinExp);
+                if (item.mpin) dataString += `\n📱 MPIN: ${item.mpin}${mExp ? ` (Exp: ${mExp})` : ''}`;
+                
+                if (item.cif) dataString += `\n📑 CIF: ${item.cif}`;
+                if (item.notes) dataString += `\n📝 Notes: ${item.notes}`;
+            } else {
+                dataString = `👤 Name: ${item.name}\n💳 Card: ${item.nick}\n🔢 Number: ${item.num}\n📅 Exp: ${item.exp}\n🔑 CVV: ${item.cvv}${item.notes ? '\n📝 Notes: ' + item.notes : ''}`;
+            }
+
+            try {
+                const tempArea = document.createElement("textarea");
+                tempArea.value = dataString;
+                tempArea.style.position = "fixed";
+                tempArea.style.left = "-9999px";
+                document.body.appendChild(tempArea);
+                
+                tempArea.focus();
+                tempArea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(tempArea);
+                
+                if (successful) {
+                    showToast('All Details Copied Securely!');
+                } else {
+                    throw new Error("Copy command failed");
+                }
+            } catch (err) {
+                console.error("Clipboard error:", err);
+                alert("Details:\n" + dataString);
+            }
+        }
+    }
+
+    async function secureShare(id) {
+        if (await verifyActionBiometric()) {
+            const item = getCards().find(c => c.id == id);
+            let dataString = "";
+            if (item.itemType === 'netbanking') {
+                dataString = `🏦 Bank: ${item.nick}\n👤 User ID: ${item.userId}`;
+                
+                let lExp = getExpiryString(item.loginUpdated, item.loginExp);
+                if (item.loginPass) dataString += `\n🔑 Password: ${item.loginPass}${lExp ? ` (Exp: ${lExp})` : ''}`;
+                
+                let pExp = getExpiryString(item.profileUpdated, item.profileExp);
+                if (item.profilePass) dataString += `\n🔐 Profile Pass: ${item.profilePass}${pExp ? ` (Exp: ${pExp})` : ''}`;
+                
+                let mExp = getExpiryString(item.mpinUpdated, item.mpinExp);
+                if (item.mpin) dataString += `\n📱 MPIN: ${item.mpin}${mExp ? ` (Exp: ${mExp})` : ''}`;
+                
+                if (item.cif) dataString += `\n📑 CIF: ${item.cif}`;
+                if (item.notes) dataString += `\n📝 Notes: ${item.notes}`;
+            } else {
+                dataString = `👤 Name: ${item.name}\n💳 Card: ${item.nick}\n🔢 Number: ${item.num}\n📅 Exp: ${item.exp}\n🔑 CVV: ${item.cvv}${item.notes ? '\n📝 Notes: ' + item.notes : ''}`;
+            }
+            
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Secure Details', text: dataString }); } 
+                catch (err) { console.log("Share cancelled", err); }
+            } else {
+                try {
+                    const tempArea = document.createElement("textarea");
+                    tempArea.value = dataString;
+                    tempArea.style.position = "fixed";
+                    tempArea.style.left = "-9999px";
+                    document.body.appendChild(tempArea);
+                    tempArea.focus();
+                    tempArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempArea);
+                    showToast("Sharing not supported. Details copied!");
+                } catch (e) {
+                    alert("Details:\n" + dataString);
+                }
+            }
+        }
+    }
+
+    // --- RENDER DETAIL VIEW --- //
+    function handleSelection() {
+        const id = document.getElementById('cardSelector').value;
+        const display = document.getElementById('cardDisplay');
+        const fab = document.getElementById('actionBtn');
+        const listView = document.getElementById('cardListView');
+
+        if(!id) { 
+            display.innerHTML = ""; 
+            if(listView) listView.classList.remove('hidden');
+            if(fab && document.getElementById('settingsSection').classList.contains('hidden')) fab.classList.remove('hidden');
+            return; 
+        }
+        
+        if(listView) listView.classList.add('hidden');
+        if(fab) fab.classList.add('hidden'); 
+        
+        const item = getCards().find(c => c.id == id);
+        if(!item) return clearSelection();
+        
+        // Notes HTML Generator
+        let notesHtml = '';
+        if (item.notes && item.notes.trim() !== '') {
+            notesHtml = `
+            <div class="notes-widget" onclick="copy(\`${item.notes.replace(/`/g, '\\`')}\`, 'Notes Copied')" title="Tap to copy notes">
+                <div class="notes-title">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Secure Notes
+                </div>
+                <div class="notes-content">${item.notes.replace(/\n/g, '<br>')}</div>
+            </div>`;
+        } else {
+            notesHtml = `
+            <div class="notes-widget" onclick="editCard(${item.id})">
+                <div class="notes-empty">No notes saved. Tap Edit to add extra info.</div>
+            </div>`;
+        }
+
+        const quickActionsHtml = `
+            <div class="quick-actions-dock">
+                <button type="button" class="quick-action-btn" onclick="secureCopyAll(${item.id})">
+                    <div class="quick-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></div>
+                    Copy
+                </button>
+                <button type="button" class="quick-action-btn" onclick="secureShare(${item.id})">
+                    <div class="quick-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></div>
+                    Share
+                </button>
+                <button type="button" class="quick-action-btn" onclick="editCard(${item.id})">
+                    <div class="quick-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div>
+                    Edit
+                </button>
+                <button type="button" class="quick-action-btn qa-danger" onclick="deleteCard(${item.id})">
+                    <div class="quick-action-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+                    Delete
+                </button>
+            </div>`;
+
+        if(item.itemType === 'netbanking') {
+            let lExpStr = getExpiryString(item.loginUpdated, item.loginExp);
+            let pExpStr = getExpiryString(item.profileUpdated, item.profileExp);
+            let mExpStr = getExpiryString(item.mpinUpdated, item.mpinExp);
+
+            display.innerHTML = `
+                <div class="credit-card bank-card-visual">
+                    <h3 style="margin:0; font-size:1.5rem; color:white; display:flex; align-items:center; gap:10px;">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/></svg>
+                        ${item.nick}
+                    </h3>
+                    <p style="color: var(--text-dim); margin: 5px 0 0 0; font-weight:500;">NetBanking Credentials</p>
+                </div>
+                
+                <div class="details-widget">
+                    <div class="detail-row" onclick="copy('${item.userId}', 'User ID Copied')">
+                        <span class="detail-label">User / Cust ID</span>
+                        <span class="detail-value mono">${item.userId} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+                    </div>
+                    <div class="detail-row" onclick="secureActionAndCopy('${item.loginPass}', 'Login Password')">
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span class="detail-label">Login Pass</span>
+                            ${lExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${lExpStr}</span>` : ''}
+                        </div>
+                        <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
+                    </div>
+                    ${item.profilePass ? `
+                    <div class="detail-row" onclick="secureActionAndCopy('${item.profilePass}', 'Profile Password')">
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span class="detail-label">Profile Pass</span>
+                            ${pExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${pExpStr}</span>` : ''}
+                        </div>
+                        <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
+                    </div>` : ''}
+                    ${item.mpin ? `
+                    <div class="detail-row" onclick="secureActionAndCopy('${item.mpin}', 'MPIN')">
+                        <div style="display:flex; flex-direction:column; gap:2px;">
+                            <span class="detail-label">MPIN</span>
+                            ${mExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${mExpStr}</span>` : ''}
+                        </div>
+                        <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
+                    </div>` : ''}
+                    ${item.cif ? `
+                    <div class="detail-row" onclick="copy('${item.cif}', 'CIF Copied')">
+                        <span class="detail-label">CIF Number</span>
+                        <span class="detail-value mono">${item.cif} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+                    </div>` : ''}
+                </div>
+                
+                ${quickActionsHtml}
+                ${notesHtml}
+                
+                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
+                    ⬅️ Back to List
+                </button>
+            `;
+        } else {
+            // Card rendering 
+            const typeParts = item.type.split(' ');
+            const mainBrand = typeParts[0]; 
+            const subType = typeParts.slice(1).join(' '); 
+
+            let theme = item.type.includes("Infinite") || item.type.includes("Elite") ? "card-infinite" : 
+                        item.type.includes("Platinum") || item.type.includes("Signature") || item.type.includes("World") ? "card-platinum" : 
+                        item.type.includes("Gold") ? "card-gold" : "card-rupay";
+
+            let brandColor = item.type.includes("Gold") ? "#fbbf24" : 
+                             (item.type.includes("Platinum") || item.type.includes("Signature")) ? "#cbd5e1" : "#ffffff";
+
+            display.innerHTML = `
+                <div class="credit-card ${theme}">
+                    <div class="card-header-top">
+                        <div style="display: flex; align-items: center;">
+                            <div class="card-chip"></div>
+                            <svg class="contactless-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a10 10 0 0 1 14 0"/><path d="M7 10a7 7 0 0 1 10 0"/><path d="M9 12a4 4 0 0 1 6 0"/><path d="M12 15h.01"/></svg>
+                        </div>
+                        <div class="sub-type-top">${subType}</div>
+                    </div>
+                    
+                    <div class="card-number" style="margin: 18px 0; cursor: pointer;" onclick="copy('${item.num}', 'Number Copied')">
+                        ${item.num}
+                    </div>
+                    
+                    <div class="card-footer-realistic">
+                        <div class="footer-item" style="cursor: pointer;" onclick="copy('${item.name}', 'Name Copied')">
+                            <span class="label">Card Holder</span>
+                            <span class="val">${item.name || 'PRASANNA KUMAR'}</span>
+                        </div>
+                        
+                        <div class="footer-row">
+                            <div class="footer-item" style="cursor: pointer;" onclick="copy('${item.exp}', 'Expiry Copied')">
+                                <span class="label">Expires</span>
+                                <span class="val">${item.exp}</span>
+                            </div>
+                            <div class="footer-item" style="cursor: pointer;" onclick="secureActionAndCopy('${item.cvv}', 'CVV')">
+                                <span class="label">CVV</span>
+                                <span class="secure-lock">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    Protected
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="network-logo-container" style="color: ${brandColor}; bottom: 20px;">
+                        <span class="network-main-name">${mainBrand}</span>
+                    </div>
+                </div>
+                
+                ${quickActionsHtml}
+                ${notesHtml}
+                
+                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
+                    ⬅️ Back to List
+                </button>`;
+        }
+        
+        display.classList.remove('hidden');
     }
 
     function updateBiometricUI() {
@@ -687,280 +1174,8 @@
         }
     }
 
-    function saveCard() {
-        const editId = document.getElementById('editId').value;
-        const card = { 
-            id: editId ? parseInt(editId) : Date.now(), 
-            nick: document.getElementById('nick').value, 
-            type: document.getElementById('type').value, 
-            num: document.getElementById('num').value, 
-            name: document.getElementById('name').value, 
-            exp: document.getElementById('exp').value, 
-            cvv: document.getElementById('cvv').value,
-            notes: document.getElementById('notes').value 
-        };
-        
-        if(!card.nick || !card.num || card.exp.length < 5) return alert("Fill all info correctly!");
-        
-        let cards = getCards();
-        if (editId) cards[cards.findIndex(c => c.id == editId)] = card;
-        else cards.push(card);
-        localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString());
-        
-        document.getElementById('addForm').classList.add('hidden');
-        updateDropdown();
-        document.getElementById('cardSelector').value = card.id;
-        handleSelection();
-    }
-
-    function getCards() { 
-        const d = localStorage.getItem('vault_data'); 
-        try { return d ? JSON.parse(CryptoJS.AES.decrypt(d, MASTER_KEY).toString(CryptoJS.enc.Utf8)) : []; } 
-        catch(e) { return []; } 
-    }
-
-    function updateDropdown() { 
-        const listView = document.getElementById('cardListView'); 
-        const cards = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); 
-        
-        if (cards.length === 0) {
-            listView.innerHTML = '<p class="sub-text" style="margin-top:20px;">No cards saved yet.</p>';
-            return;
-        }
-
-        const groupedCards = {};
-        cards.forEach(card => {
-            let bankName = "";
-            const nickStr = card.nick.trim();
-            if (nickStr.toLowerCase().startsWith("standard chartered")) {
-                bankName = "Standard Chartered";
-            } else {
-                bankName = nickStr.split(" ")[0]; 
-            }
-            bankName = bankName.charAt(0).toUpperCase() + bankName.slice(1);
-            if (!groupedCards[bankName]) groupedCards[bankName] = [];
-            groupedCards[bankName].push(card);
-        });
-
-        let html = '';
-        const sortedBanks = Object.keys(groupedCards).sort((a, b) => a.localeCompare(b));
-        
-        sortedBanks.forEach(bank => {
-            html += `<div class="bank-group-title">${bank}</div>`;
-            groupedCards[bank].forEach(card => {
-                html += `
-                <div class="card-list-item" onclick="selectCard(${card.id})">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-orange)"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                    ${card.nick}
-                </div>`;
-            });
-        });
-
-        listView.innerHTML = html; 
-    }
-
-    function selectCard(id) {
-        document.getElementById('cardSelector').value = id;
-        handleSelection();
-    }
-
-    function clearSelection() {
-        document.getElementById('cardSelector').value = "";
-        handleSelection();
-    }
-
-    // --- NEW SECURE ACTION FUNCTIONS --- //
-    async function verifyActionBiometric() {
-        const enabled = localStorage.getItem("vault_bio_enabled");
-        const storedId = localStorage.getItem("vault_bio_id");
-
-        if (enabled === "true" && storedId) {
-            try {
-                const challenge = randomChallenge();
-                const publicKey = {
-                    challenge,
-                    allowCredentials: [{ id: base64ToBuffer(storedId), type: "public-key", transports: ["internal"] }],
-                    userVerification: "required",
-                    timeout: 60000
-                };
-                await navigator.credentials.get({ publicKey });
-                return true; 
-            } catch (err) {
-                showToast("Verification cancelled or failed");
-                return false;
-            }
-        } else {
-            alert("Security Alert: Please enable Biometrics in Settings first to access or share sensitive data like the CVV.");
-            return false;
-        }
-    }
-
-    async function secureCopyCVV(id) {
-        if (await verifyActionBiometric()) {
-            const card = getCards().find(c => c.id == id);
-            copy(card.cvv, 'CVV Copied Securely!');
-        }
-    }
-
-    async function secureCopyAll(id) {
-        if (await verifyActionBiometric()) {
-            const card = getCards().find(c => c.id == id);
-            const dataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}${card.notes ? '\n📝 Notes: ' + card.notes : ''}`;
-            copy(dataString, 'All Details Copied Securely!');
-        }
-    }
-
-    async function secureShare(id) {
-        if (await verifyActionBiometric()) {
-            const card = getCards().find(c => c.id == id);
-            const dataString = `👤 Name: ${card.name}\n💳 Card: ${card.nick}\n🔢 Number: ${card.num}\n📅 Exp: ${card.exp}\n🔑 CVV: ${card.cvv}${card.notes ? '\n📝 Notes: ' + card.notes : ''}`;
-            if (navigator.share) {
-                try { await navigator.share({ title: 'Card Details', text: dataString }); } 
-                catch (err) { console.log("Share cancelled", err); }
-            } else {
-                copy(dataString, "Sharing not supported. Details copied!");
-            }
-        }
-    }
-    // ----------------------------------- //
-
-    function handleSelection() {
-        const id = document.getElementById('cardSelector').value;
-        const display = document.getElementById('cardDisplay');
-        const fab = document.getElementById('actionBtn');
-        const listView = document.getElementById('cardListView');
-
-        if(!id) { 
-            display.innerHTML = ""; 
-            if(listView) listView.classList.remove('hidden');
-            if(fab && document.getElementById('settingsSection').classList.contains('hidden')) fab.classList.remove('hidden');
-            return; 
-        }
-        
-        if(listView) listView.classList.add('hidden');
-        if(fab) fab.classList.add('hidden'); 
-        
-        const card = getCards().find(c => c.id == id);
-        if(!card) return clearSelection();
-        
-        const typeParts = card.type.split(' ');
-        const mainBrand = typeParts[0]; 
-        const subType = typeParts.slice(1).join(' '); 
-
-        let theme = card.type.includes("Infinite") || card.type.includes("Elite") ? "card-infinite" : 
-                    card.type.includes("Platinum") || card.type.includes("Signature") || card.type.includes("World") ? "card-platinum" : 
-                    card.type.includes("Gold") ? "card-gold" : "card-rupay";
-
-        let brandColor = card.type.includes("Gold") ? "#fbbf24" : 
-                         (card.type.includes("Platinum") || card.type.includes("Signature")) ? "#cbd5e1" : "#ffffff";
-
-        // Build Notes Widget
-        let notesHtml = '';
-        if (card.notes && card.notes.trim() !== '') {
-            notesHtml = `
-            <div class="notes-widget" onclick="copy(\`${card.notes.replace(/`/g, '\\`')}\`, 'Notes Copied')" title="Tap to copy notes">
-                <div class="notes-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    Secure Notes
-                </div>
-                <div class="notes-content">${card.notes.replace(/\n/g, '<br>')}</div>
-            </div>`;
-        } else {
-            notesHtml = `
-            <div class="notes-widget" onclick="editCard(${card.id})">
-                <div class="notes-empty">
-                    No notes saved. Tap Edit to add a PIN, Zip Code, or Support Numbers.
-                </div>
-            </div>`;
-        }
-
-        display.innerHTML = `
-            <div class="credit-card ${theme}">
-                <div class="card-header-top">
-                    <div style="display: flex; align-items: center;">
-                        <div class="card-chip"></div>
-                        <svg class="contactless-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8a10 10 0 0 1 14 0"/><path d="M7 10a7 7 0 0 1 10 0"/><path d="M9 12a4 4 0 0 1 6 0"/><path d="M12 15h.01"/></svg>
-                    </div>
-                    <div class="sub-type-top">${subType}</div>
-                </div>
-                
-                <div class="card-number" style="margin: 18px 0; cursor: pointer;" onclick="copy('${card.num}', 'Number Copied')">
-                    ${card.num}
-                </div>
-                
-                <div class="card-footer-realistic">
-                    <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.name}', 'Name Copied')">
-                        <span class="label">Card Holder</span>
-                        <span class="val">${card.name || 'PRASANNA KUMAR'}</span>
-                    </div>
-                    
-                    <div class="footer-row">
-                        <div class="footer-item" style="cursor: pointer;" onclick="copy('${card.exp}', 'Expiry Copied')">
-                            <span class="label">Expires</span>
-                            <span class="val">${card.exp}</span>
-                        </div>
-                        <div class="footer-item" style="cursor: pointer;" onclick="secureCopyCVV(${card.id})">
-                            <span class="label">CVV</span>
-                            <span class="secure-lock">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                Protected
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="network-logo-container" style="color: ${brandColor}; bottom: 20px;">
-                    <span class="network-main-name">${mainBrand}</span>
-                </div>
-            </div>
-            
-            <div class="quick-actions-dock">
-                <button class="quick-action-btn" onclick="secureCopyAll(${card.id})">
-                    <div class="quick-action-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </div>
-                    Copy
-                </button>
-                <button class="quick-action-btn" onclick="secureShare(${card.id})">
-                    <div class="quick-action-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    </div>
-                    Share
-                </button>
-                <button class="quick-action-btn" onclick="editCard(${card.id})">
-                    <div class="quick-action-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                    </div>
-                    Edit
-                </button>
-                <button class="quick-action-btn qa-danger" onclick="deleteCard(${card.id})">
-                    <div class="quick-action-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </div>
-                    Delete
-                </button>
-            </div>
-
-            ${notesHtml}
-            
-            <button class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
-                ⬅️ Back to Card List
-            </button>`;
-        
-        display.classList.remove('hidden');
-    }
-
-    function deleteCard(id) { 
-        if(confirm("Delete permanently?")) { 
-            let cards = getCards().filter(c => c.id != id); 
-            localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(cards), MASTER_KEY).toString()); 
-            document.getElementById('cardSelector').value = ""; 
-            updateDropdown(); 
-            handleSelection(); 
-        } 
-    }
-
     function toggleSettings() {
+        resetPasswordIcons();
         const settings = document.getElementById('settingsSection');
         const isHidden = settings.classList.toggle('hidden');
         
@@ -1008,38 +1223,72 @@
         const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="vault_backup.txt"; a.click();
     }
 
+    // UPDATED: Custom Restore Process
     function importData(i) {
+        if (!i.files || !i.files[0]) return;
         const r = new FileReader();
         r.onload = (e) => {
             try {
                 const j = JSON.parse(e.target.result);
-                const pass = prompt("Enter the password used for this backup:");
-                if (!pass) return;
-
-                if (CryptoJS.SHA256(pass).toString() !== j.hash) {
-                    alert("Wrong password for this backup!");
-                    return;
-                }
-
-                const decrypted = CryptoJS.AES.decrypt(j.data, pass).toString(CryptoJS.enc.Utf8);
-                const parsed = JSON.parse(decrypted);
-
-                localStorage.setItem('vault_data', j.data);
-                localStorage.setItem('vault_hash', j.hash);
-                localStorage.setItem('vault_rk', j.rk);
-
-                MASTER_KEY = pass; 
-                alert("Backup restored successfully!");
-
+                if (!j.hash || !j.data) throw new Error("Invalid format");
+                
+                pendingRestoreData = j;
+                
+                // Hide other screens
+                document.getElementById('onboarding').classList.add('hidden');
                 document.getElementById('unlockSection').classList.add('hidden');
-                document.getElementById('mainContent').classList.remove('hidden');
-                updateDropdown();
+                document.getElementById('mainContent').classList.add('hidden');
+                
+                // Show Restore Screen
+                document.getElementById('restorePass').value = '';
+                resetPasswordIcons();
+                document.getElementById('restoreSection').classList.remove('hidden');
+
             } catch(err) {
                 alert("Backup file corrupted or incompatible.");
                 console.error(err);
             }
+            i.value = ''; // Allow re-selecting the exact same file
         };
         r.readAsText(i.files[0]);
+    }
+
+    function confirmRestore() {
+        if (!pendingRestoreData) return;
+        const pass = document.getElementById('restorePass').value;
+        if (!pass) return alert("Please enter the password.");
+
+        const j = pendingRestoreData;
+
+        if (CryptoJS.SHA256(pass).toString() !== j.hash) {
+            alert("Wrong password for this backup!");
+            return;
+        }
+
+        try {
+            // Verify decryption works before overwriting
+            const decrypted = CryptoJS.AES.decrypt(j.data, pass).toString(CryptoJS.enc.Utf8);
+            if (!decrypted) throw new Error("Decryption failed");
+            
+            localStorage.setItem('vault_data', j.data);
+            localStorage.setItem('vault_hash', j.hash);
+            if (j.rk) localStorage.setItem('vault_rk', j.rk);
+
+            MASTER_KEY = pass; 
+            alert("Backup restored successfully!");
+
+            document.getElementById('restoreSection').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            updateDropdown();
+        } catch(err) {
+            alert("Failed to decrypt backup data. The file might be corrupted.");
+        }
+    }
+
+    function cancelRestore() {
+        pendingRestoreData = null;
+        document.getElementById('restoreSection').classList.add('hidden');
+        location.reload(); // Quickest way to safely revert view states based on vault status
     }
 
     function showRecovery() { document.getElementById('unlockSection').classList.add('hidden'); document.getElementById('recoverySection').classList.remove('hidden'); }
@@ -1154,6 +1403,17 @@
             updateBiometricUI();
         } catch (err) {
             alert("Verification failed. Cannot disable biometrics.");
+        }
+    }
+    
+    // Global delete helper
+    function deleteCard(id) {
+        if(confirm("Are you sure you want to delete this item?")) {
+            let items = getCards();
+            items = items.filter(c => c.id !== id);
+            localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(items), MASTER_KEY).toString());
+            clearSelection();
+            updateDropdown();
         }
     }
 </script>
