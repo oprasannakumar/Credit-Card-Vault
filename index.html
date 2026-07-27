@@ -488,8 +488,11 @@
     }
 
     function copy(text, msg = "Copied!") {
-        navigator.clipboard.writeText(text);
-        showToast(msg);
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => showToast("Failed to copy"));
+        } else {
+            showToast(msg);
+        }
     }
     
     function togglePwd(inputId, btnEl) {
@@ -858,26 +861,15 @@
         
         if (isVerified) {
             try {
-                const tempArea = document.createElement("textarea");
-                tempArea.value = text;
-                tempArea.style.position = "fixed";
-                tempArea.style.left = "-9999px";
-                document.body.appendChild(tempArea);
-                
-                tempArea.focus();
-                tempArea.select();
-                
-                const successful = document.execCommand('copy');
-                document.body.removeChild(tempArea);
-                
-                if (successful) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
                     showToast(`${label} Copied Securely!`);
                 } else {
-                    throw new Error("Copy command failed");
+                    throw new Error("Clipboard API unavailable");
                 }
             } catch (err) {
                 console.error("Clipboard error:", err);
-                const copyFallback = confirm(`${label} could not be copied automatically. Do you want to see the value?`);
+                const copyFallback = confirm(`${label} could not be copied automatically due to browser restrictions. Do you want to see the value?`);
                 if (copyFallback) alert(`${label}: ${text}`);
             }
         }
@@ -908,22 +900,11 @@
             }
 
             try {
-                const tempArea = document.createElement("textarea");
-                tempArea.value = dataString;
-                tempArea.style.position = "fixed";
-                tempArea.style.left = "-9999px";
-                document.body.appendChild(tempArea);
-                
-                tempArea.focus();
-                tempArea.select();
-                
-                const successful = document.execCommand('copy');
-                document.body.removeChild(tempArea);
-                
-                if (successful) {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(dataString);
                     showToast('All Details Copied Securely!');
                 } else {
-                    throw new Error("Copy command failed");
+                    throw new Error("Clipboard API unavailable");
                 }
             } catch (err) {
                 console.error("Clipboard error:", err);
@@ -959,16 +940,12 @@
                 catch (err) { console.log("Share cancelled", err); }
             } else {
                 try {
-                    const tempArea = document.createElement("textarea");
-                    tempArea.value = dataString;
-                    tempArea.style.position = "fixed";
-                    tempArea.style.left = "-9999px";
-                    document.body.appendChild(tempArea);
-                    tempArea.focus();
-                    tempArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(tempArea);
-                    showToast("Sharing not supported. Details copied!");
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(dataString);
+                        showToast("Sharing not supported. Details copied!");
+                    } else {
+                        throw new Error("Clipboard fallback unavailable");
+                    }
                 } catch (e) {
                     alert("Details:\n" + dataString);
                 }
@@ -1223,7 +1200,6 @@
         const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="vault_backup.txt"; a.click();
     }
 
-    // UPDATED: Custom Restore Process
     function importData(i) {
         if (!i.files || !i.files[0]) return;
         const r = new FileReader();
@@ -1234,12 +1210,10 @@
                 
                 pendingRestoreData = j;
                 
-                // Hide other screens
                 document.getElementById('onboarding').classList.add('hidden');
                 document.getElementById('unlockSection').classList.add('hidden');
                 document.getElementById('mainContent').classList.add('hidden');
                 
-                // Show Restore Screen
                 document.getElementById('restorePass').value = '';
                 resetPasswordIcons();
                 document.getElementById('restoreSection').classList.remove('hidden');
@@ -1248,7 +1222,7 @@
                 alert("Backup file corrupted or incompatible.");
                 console.error(err);
             }
-            i.value = ''; // Allow re-selecting the exact same file
+            i.value = ''; 
         };
         r.readAsText(i.files[0]);
     }
@@ -1266,7 +1240,6 @@
         }
 
         try {
-            // Verify decryption works before overwriting
             const decrypted = CryptoJS.AES.decrypt(j.data, pass).toString(CryptoJS.enc.Utf8);
             if (!decrypted) throw new Error("Decryption failed");
             
@@ -1288,7 +1261,7 @@
     function cancelRestore() {
         pendingRestoreData = null;
         document.getElementById('restoreSection').classList.add('hidden');
-        location.reload(); // Quickest way to safely revert view states based on vault status
+        location.reload(); 
     }
 
     function showRecovery() { document.getElementById('unlockSection').classList.add('hidden'); document.getElementById('recoverySection').classList.remove('hidden'); }
@@ -1406,7 +1379,6 @@
         }
     }
     
-    // Global delete helper
     function deleteCard(id) {
         if(confirm("Are you sure you want to delete this item?")) {
             let items = getCards();
