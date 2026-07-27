@@ -857,59 +857,76 @@
     async function secureActionAndCopy(text, label) {
         if (!text) return showToast(`No ${label} saved`);
 
-        const isVerified = await verifyActionBiometric();
-        
-        if (isVerified) {
+        if (navigator.clipboard && window.ClipboardItem) {
             try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(text);
-                    showToast(`${label} Copied Securely!`);
-                } else {
-                    throw new Error("Clipboard API unavailable");
-                }
+                const item = new ClipboardItem({
+                    "text/plain": (async () => {
+                        const isVerified = await verifyActionBiometric();
+                        if (!isVerified) throw new Error("Biometric verification failed");
+                        return new Blob([text], { type: "text/plain" });
+                    })()
+                });
+
+                await navigator.clipboard.write([item]);
+                showToast(`${label} Copied Securely!`);
+                return;
             } catch (err) {
-                console.error("Clipboard error:", err);
-                const copyFallback = confirm(`${label} could not be copied automatically due to browser restrictions. Do you want to see the value?`);
-                if (copyFallback) alert(`${label}: ${text}`);
+                console.error("ClipboardItem copy failed:", err);
+                if (err.message === "Biometric verification failed") return;
             }
+        }
+
+        const isVerified = await verifyActionBiometric();
+        if (isVerified) {
+            prompt(`Copy ${label} manually:`, text);
         }
     }
 
     async function secureCopyAll(id) {
-        if (await verifyActionBiometric()) {
-            const item = getCards().find(c => c.id == id);
-            if (!item) return;
+        const item = getCards().find(c => c.id == id);
+        if (!item) return;
 
-            let dataString = "";
-            if (item.itemType === 'netbanking') {
-                dataString = `🏦 Bank: ${item.nick}\n👤 User ID: ${item.userId}`;
-                
-                let lExp = getExpiryString(item.loginUpdated, item.loginExp);
-                if (item.loginPass) dataString += `\n🔑 Password: ${item.loginPass}${lExp ? ` (Exp: ${lExp})` : ''}`;
-                
-                let pExp = getExpiryString(item.profileUpdated, item.profileExp);
-                if (item.profilePass) dataString += `\n🔐 Profile Pass: ${item.profilePass}${pExp ? ` (Exp: ${pExp})` : ''}`;
-                
-                let mExp = getExpiryString(item.mpinUpdated, item.mpinExp);
-                if (item.mpin) dataString += `\n📱 MPIN: ${item.mpin}${mExp ? ` (Exp: ${mExp})` : ''}`;
-                
-                if (item.cif) dataString += `\n📑 CIF: ${item.cif}`;
-                if (item.notes) dataString += `\n📝 Notes: ${item.notes}`;
-            } else {
-                dataString = `👤 Name: ${item.name}\n💳 Card: ${item.nick}\n🔢 Number: ${item.num}\n📅 Exp: ${item.exp}\n🔑 CVV: ${item.cvv}${item.notes ? '\n📝 Notes: ' + item.notes : ''}`;
-            }
+        let dataString = "";
+        if (item.itemType === 'netbanking') {
+            dataString = `🏦 Bank: ${item.nick}\n👤 User ID: ${item.userId}`;
+            
+            let lExp = getExpiryString(item.loginUpdated, item.loginExp);
+            if (item.loginPass) dataString += `\n🔑 Password: ${item.loginPass}${lExp ? ` (Exp: ${lExp})` : ''}`;
+            
+            let pExp = getExpiryString(item.profileUpdated, item.profileExp);
+            if (item.profilePass) dataString += `\n🔐 Profile Pass: ${item.profilePass}${pExp ? ` (Exp: ${pExp})` : ''}`;
+            
+            let mExp = getExpiryString(item.mpinUpdated, item.mpinExp);
+            if (item.mpin) dataString += `\n📱 MPIN: ${item.mpin}${mExp ? ` (Exp: ${mExp})` : ''}`;
+            
+            if (item.cif) dataString += `\n📑 CIF: ${item.cif}`;
+            if (item.notes) dataString += `\n📝 Notes: ${item.notes}`;
+        } else {
+            dataString = `👤 Name: ${item.name}\n💳 Card: ${item.nick}\n🔢 Number: ${item.num}\n📅 Exp: ${item.exp}\n🔑 CVV: ${item.cvv}${item.notes ? '\n📝 Notes: ' + item.notes : ''}`;
+        }
 
+        if (navigator.clipboard && window.ClipboardItem) {
             try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(dataString);
-                    showToast('All Details Copied Securely!');
-                } else {
-                    throw new Error("Clipboard API unavailable");
-                }
+                const clipboardItem = new ClipboardItem({
+                    "text/plain": (async () => {
+                        const isVerified = await verifyActionBiometric();
+                        if (!isVerified) throw new Error("Biometric verification failed");
+                        return new Blob([dataString], { type: "text/plain" });
+                    })()
+                });
+
+                await navigator.clipboard.write([clipboardItem]);
+                showToast('All Details Copied Securely!');
+                return;
             } catch (err) {
-                console.error("Clipboard error:", err);
-                alert("Details:\n" + dataString);
+                console.error("ClipboardItem copy failed:", err);
+                if (err.message === "Biometric verification failed") return;
             }
+        }
+
+        const isVerified = await verifyActionBiometric();
+        if (isVerified) {
+            prompt("Copy all details manually:", dataString);
         }
     }
 
@@ -940,14 +957,17 @@
                 catch (err) { console.log("Share cancelled", err); }
             } else {
                 try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(dataString);
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        const clipboardItem = new ClipboardItem({
+                            "text/plain": Promise.resolve(new Blob([dataString], { type: "text/plain" }))
+                        });
+                        await navigator.clipboard.write([clipboardItem]);
                         showToast("Sharing not supported. Details copied!");
                     } else {
                         throw new Error("Clipboard fallback unavailable");
                     }
                 } catch (e) {
-                    alert("Details:\n" + dataString);
+                    prompt("Copy details manually:", dataString);
                 }
             }
         }
