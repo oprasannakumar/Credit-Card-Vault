@@ -405,7 +405,6 @@
                 <hr style="border-color: var(--glass-border); width: 100%; margin: 10px 0;">
 
                 <button type="button" class="menu-item" id="googleLinkBtn" onclick="connectDrive()">☁️ Link Google Account</button>
-                <button type="button" class="menu-item hidden" id="googleSyncBtn" onclick="syncToCloud(true)">🔄 Sync to Google Drive</button>
                 <button type="button" class="menu-item danger hidden" id="googleUnlinkBtn" onclick="logoutGoogle()">🚪 Logout</button>
             </div>
 
@@ -472,7 +471,8 @@
                         <option value="Amex Platinum">Amex Platinum</option>
                     </optgroup>
                 </select>
-                <input type="tel" id="num" placeholder="Card Number">
+                <!-- Added maxlength to restrict characters visually (16 digits + 3 spaces) -->
+                <input type="tel" id="num" placeholder="Card Number" maxlength="19">
                 <input type="text" id="name" placeholder="Cardholder Name">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <input type="tel" id="exp" placeholder="MM/YY">
@@ -638,8 +638,10 @@
 
     // Input Formatters & Restrictions
     document.getElementById('num').addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '').match(/.{1,4}/g);
-        e.target.value = v ? v.join(' ') : '';
+        // Restrict to max 16 digits
+        let v = e.target.value.replace(/\D/g, '').substring(0, 16); 
+        let formatted = v.match(/.{1,4}/g);
+        e.target.value = formatted ? formatted.join(' ') : '';
     });
     
     document.getElementById('exp').addEventListener('input', e => {
@@ -659,14 +661,14 @@
 
     function promptUpdateName() {
         const isGoogle = localStorage.getItem("vault_user_email");
-        if (isGoogle) {
-            showToast("Logged in with Google account");
-            return;
-        }
-        const currentName = localStorage.getItem("vault_user_name") || "User";
+        if (isGoogle) return; // Prevent renaming if Google account is linked
+
+        let currentName = localStorage.getItem("vault_user_name") || "User";
+        currentName = currentName.replace("✏️", "").trim(); // Clean up if stored accidentally
+        
         const newName = prompt("Enter your name:", currentName);
         if (newName && newName.trim()) {
-            localStorage.setItem("vault_user_name", newName.trim());
+            localStorage.setItem("vault_user_name", newName.replace("✏️", "").trim());
             updateProfileUI();
         }
     }
@@ -762,7 +764,9 @@
     // --- Profile UI Management --- //
     function updateProfileUI() {
         const email = localStorage.getItem("vault_user_email");
-        const name = localStorage.getItem("vault_user_name") || "User✏️";
+        let name = localStorage.getItem("vault_user_name") || "User";
+        name = name.replace("✏️", "").trim(); // Clean up if it was saved accidentally
+
         const pictureUrl = localStorage.getItem("vault_user_picture");
         const initial = email ? email.charAt(0).toUpperCase() : name.charAt(0).toUpperCase();
 
@@ -772,7 +776,6 @@
         const settingsEmail = document.getElementById("settingsUserEmail");
         
         const googleLinkBtn = document.getElementById("googleLinkBtn");
-        const googleSyncBtn = document.getElementById("googleSyncBtn");
         const googleUnlinkBtn = document.getElementById("googleUnlinkBtn");
 
         const renderAvatar = (el) => {
@@ -789,16 +792,26 @@
         renderAvatar(topAvatar);
         renderAvatar(settingsAvatar);
 
-        if (settingsName) settingsName.innerText = name;
+        if (settingsName) {
+            if (email) {
+                // Remove pointer events when Google is linked
+                settingsName.innerText = name;
+                settingsName.style.cursor = "default";
+                settingsName.title = "";
+            } else {
+                settingsName.innerText = name + " ✏️";
+                settingsName.style.cursor = "pointer";
+                settingsName.title = "Tap to change name";
+            }
+        }
+        
         if (settingsEmail) settingsEmail.innerText = email || "Offline Mode";
 
         if (email) {
             if (googleLinkBtn) googleLinkBtn.classList.add("hidden");
-            if (googleSyncBtn) googleSyncBtn.classList.remove("hidden");
             if (googleUnlinkBtn) googleUnlinkBtn.classList.remove("hidden");
         } else {
             if (googleLinkBtn) googleLinkBtn.classList.remove("hidden");
-            if (googleSyncBtn) googleSyncBtn.classList.add("hidden");
             if (googleUnlinkBtn) googleUnlinkBtn.classList.add("hidden");
         }
         updateBiometricUI();
