@@ -23,7 +23,6 @@
         }
 
         html, body {
-            /* Disables the native pull-to-refresh on mobile browsers */
             overscroll-behavior-y: none; 
         }
 
@@ -253,7 +252,6 @@
 <div class="container">
     <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
 
-    <!-- Onboarding Screen -->
     <div id="onboarding" class="hidden">
         <div id="step1">
             <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">👋</span></div></div>
@@ -294,7 +292,6 @@
         </div>
     </div>
 
-    <!-- Unlock Section -->
     <div id="unlockSection" class="hidden">
         <div class="bio-icon-wrapper">
             <div class="bio-icon-circle">
@@ -323,11 +320,10 @@
         </div>
     </div>
 
-    <!-- Main Vault Dashboard -->
     <div id="vaultDashboard" class="hidden">
         <div class="top-action-bar">
             <h3 style="margin: 0; font-size: 1.2rem;">My Cards</h3>
-            <button type="button" class="profile-btn" onclick="openSettings()" id="userAvatarBtn">P</button>
+            <button type="button" class="profile-btn" onclick="openSettings()" id="userAvatarBtn">V</button>
         </div>
         
         <input type="text" id="searchInput" placeholder="🔍 Search cards..." oninput="renderVaultList()" style="margin-bottom: 1.5rem;">
@@ -337,7 +333,6 @@
         <button type="button" class="fab" onclick="openCardForm()">+</button>
     </div>
 
-    <!-- Detailed Card View -->
     <div id="cardDetailView" class="hidden">
         <div class="top-action-bar">
             <button type="button" class="btn-ghost" style="width: auto;" onclick="closeCardDetail()">← Back</button>
@@ -396,7 +391,6 @@
         </div>
     </div>
 
-    <!-- Add/Edit Card Modal View -->
     <div id="cardFormView" class="hidden">
         <div class="top-action-bar">
             <button type="button" class="btn-ghost" style="width: auto;" onclick="closeCardForm()">Cancel</button>
@@ -418,7 +412,6 @@
         <textarea id="cardNotes" placeholder="Additional Notes (limits, billing cycle, perks)..."></textarea>
     </div>
 
-    <!-- Profile & Settings View -->
     <div id="settingsView" class="hidden">
         <div class="top-action-bar">
             <button type="button" class="btn-ghost" style="width: auto;" onclick="closeSettings()">← Back</button>
@@ -427,9 +420,9 @@
         </div>
 
         <div class="profile-header">
-            <div class="profile-avatar" id="settingsAvatar">P</div>
+            <div class="profile-avatar" id="settingsAvatar">V</div>
             <div class="profile-name" id="settingsName">Vault Owner</div>
-            <div class="profile-email" id="settingsEmail">Offline Vault Mode</div>
+            <div class="profile-email" id="settingsEmail">Offline Mode</div>
         </div>
 
         <div class="menu-list">
@@ -443,7 +436,7 @@
 
 <script>
     let vaultKey = null;
-    let vaultData = { cards: [], userProfile: { name: 'Prasanna Kumar', email: 'oprasannak@gmail.com' } };
+    let vaultData = { cards: [], userProfile: { name: 'Vault Owner', email: 'Offline Mode' } };
     let currentEditingIndex = -1;
     let currentCard = null;
     let isCvvMasked = true;
@@ -516,7 +509,11 @@
                 vaultKey = pass;
                 vaultData = decryptedData;
                 if (!vaultData.cards) vaultData.cards = [];
-                if (!vaultData.userProfile) vaultData.userProfile = { name: 'Vault Owner', email: 'Local Mode' };
+                if (!vaultData.userProfile) vaultData.userProfile = { name: 'Vault Owner', email: 'Offline Mode' };
+                
+                // Update avatar button on dash based on profile name
+                document.getElementById('userAvatarBtn').innerText = (vaultData.userProfile.name || 'V')[0].toUpperCase();
+                
                 showScreen('vaultDashboard');
                 renderVaultList();
             } else {
@@ -743,10 +740,10 @@ CVV: ${currentCard.cvv || 'N/A'}`;
     }
 
     function openSettings() {
-        const user = vaultData.userProfile || { name: 'Vault Owner', email: 'Local Mode' };
+        const user = vaultData.userProfile || { name: 'Vault Owner', email: 'Offline Mode' };
         document.getElementById('settingsName').innerText = user.name;
         document.getElementById('settingsEmail').innerText = user.email;
-        document.getElementById('settingsAvatar').innerText = (user.name || 'U')[0].toUpperCase();
+        document.getElementById('settingsAvatar').innerText = (user.name || 'V')[0].toUpperCase();
         showScreen('settingsView');
     }
 
