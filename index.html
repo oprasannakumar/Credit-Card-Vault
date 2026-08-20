@@ -8,10 +8,9 @@
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="icon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
-      
         :root { 
             --primary-orange: #f59e0b; 
             --bg-dark: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
@@ -240,7 +239,6 @@
             <p class="sub-text">Encryption at your fingertips. All data stays on your device.</p>
             <button type="button" class="btn-main" onclick="nextStep(2)">Get Started</button>
             
-            <!-- New Google Options -->
             <button type="button" class="btn-ghost google-auth-btn" onclick="connectDrive()" style="margin-top:15px; color:var(--primary-orange); border-color:var(--primary-orange);">
                 ☁️ Login to Google
             </button>
@@ -275,7 +273,7 @@
         </div>
     </div>
 
-    <div id="unlockSection">
+    <div id="unlockSection" class="hidden">
         <div class="bio-icon-wrapper">
             <div class="bio-icon-circle">
                 <span class="bio-icon">
@@ -308,7 +306,6 @@
         <button type="button" class="btn-link" onclick="restoreFromCloud()" style="margin-top: 10px;">📥 Restore from Google Drive</button>
         <button type="button" id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
 
-        
         <div class="status-footer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Stored locally on this device only
@@ -372,8 +369,9 @@
             </div>
             
             <button type="button" class="btn-main" onclick="changePassword()">Update Password</button>
+            
             <button type="button" class="btn-ghost" style="margin-top:15px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="syncToCloud()">☁️ Sync to Google Drive</button>
-<button type="button" class="btn-ghost" style="margin-top:10px; margin-bottom:15px;" onclick="restoreFromCloud()">📥 Restore from Drive</button>
+            <button type="button" class="btn-ghost" style="margin-top:10px; margin-bottom:15px;" onclick="restoreFromCloud()">📥 Restore from Drive</button>
 
             <div id="rkBox" class="hidden">
                 <div class="rk-display" id="rkVal"></div>
@@ -494,9 +492,9 @@
 <script>
     let MASTER_KEY = "";
     let pendingRestoreData = null; // Holds the parsed file data securely
-    const GOOGLE_CLIENT_ID = "455353267035-tvggeucvch4scohdpp1bucugkaeb5a2g.apps.googleusercontent.com"; 
-    let tokenClient;
-    let accessToken = null;
+    const BACKEND_URL = "https://vault-backend.oprasannak.workers.dev";
+    const GOOGLE_CLIENT_ID = "455353267035-tvggeucvch4scohdpp1bucugkaeb5a2g.apps.googleusercontent.com";
+    let codeClient = null;
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -589,31 +587,61 @@
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
 
-        window.addEventListener("load", () => {
-        // Initialize Google Identity Services
+    // Helper to update Google connection UI status globally
+    function updateGoogleButtons(email = "") {
+        document.querySelectorAll('.google-auth-btn').forEach(btn => {
+            btn.innerHTML = email ? `✅ Connected (${email})` : "✅ Google Connected";
+            btn.style.color = "#10b981";
+            btn.style.borderColor = "#10b981";
+            btn.onclick = null;
+        });
+    }
+
+    window.addEventListener("load", () => {
+        // 1. Check if user is already authenticated
+        const savedUserId = localStorage.getItem("vault_user_id");
+        const savedEmail = localStorage.getItem("vault_user_email");
+        if (savedUserId) {
+            updateGoogleButtons(savedEmail);
+        }
+
+        // 2. Initialize Google Identity Services (Code Flow for permanent access)
         if (window.google) {
-            tokenClient = google.accounts.oauth2.initTokenClient({
+            codeClient = google.accounts.oauth2.initCodeClient({
                 client_id: GOOGLE_CLIENT_ID,
-                scope: 'https://www.googleapis.com/auth/drive.file',
-                callback: (response) => {
+                scope: "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
+                ux_mode: "popup",
+                callback: async (response) => {
                     if (response.error) {
-                        showToast("Authentication failed.");
+                        showToast("Authentication failed");
                         return;
                     }
-                    accessToken = response.access_token;
-                    showToast("Google Drive Connected!");
-                    
-                    // Automatically update the buttons to show success
-                    document.querySelectorAll('.google-auth-btn').forEach(btn => {
-                        btn.innerHTML = "✅ Google Connected";
-                        btn.style.color = "#10b981"; // Success Green
-                        btn.style.borderColor = "#10b981";
-                        btn.onclick = null; // Prevent logging in twice
-                    });
+
+                    showToast("Connecting to server...");
+                    try {
+                        const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ code: response.code, redirectUri: "postmessage" })
+                        });
+
+                        const data = await res.json();
+                        if (data.error) throw new Error(data.error);
+
+                        // Save persistent user identifier
+                        localStorage.setItem("vault_user_id", data.userId);
+                        if (data.email) localStorage.setItem("vault_user_email", data.email);
+
+                        showToast("Google Account Linked Permanently! ☁️");
+                        updateGoogleButtons(data.email);
+                    } catch (err) {
+                        alert("Backend connection failed: " + err.message);
+                    }
                 }
             });
         }
 
+        // 3. Vault UI Initialization
         const hasVault = localStorage.getItem("vault_hash");
         const bioEnabled = localStorage.getItem("vault_bio_enabled") === "true";
 
@@ -630,8 +658,6 @@
         }
     });
 
-
-
     function unlockVault() {
         const pass = document.getElementById('masterPass').value;
         const storedHash = localStorage.getItem('vault_hash');
@@ -647,103 +673,88 @@
         document.getElementById('mainContent').classList.remove('hidden');
         updateDropdown();
     }
+
     // --- CLOUD SYNC LOGIC --- //
     function connectDrive() {
-        tokenClient.requestAccessToken({prompt: 'consent'});
-    }
-
-    async function getBackupFileId() {
-        const res = await fetch("https://www.googleapis.com/drive/v3/files?q=name='vault_secure_sync.txt' and trashed=false", {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        const data = await res.json();
-        return data.files && data.files.length > 0 ? data.files[0].id : null;
+        if (!codeClient) return alert("Google services not ready. Please refresh.");
+        codeClient.requestCode();
     }
 
     async function syncToCloud() {
-        if (!accessToken) return connectDrive();
-        
+        const userId = localStorage.getItem("vault_user_id");
+        if (!userId) {
+            showToast("Please log in to Google first.");
+            return connectDrive();
+        }
+
         const encryptedData = localStorage.getItem('vault_data');
         if (!encryptedData) return showToast("No data to sync");
-        
-        showToast("Syncing to Drive...");
-        
-        try {
-            let fileId = await getBackupFileId();
-            
-            if (!fileId) {
-                const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
-                    method: "POST",
-                    headers: { 
-                        Authorization: `Bearer ${accessToken}`, 
-                        "Content-Type": "application/json" 
-                    },
-                    body: JSON.stringify({ name: "vault_secure_sync.txt" })
-                });
-                const createData = await createRes.json();
-                fileId = createData.id;
-            }
 
-            await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-                method: "PATCH",
-                headers: { 
-                    Authorization: `Bearer ${accessToken}`, 
-                    "Content-Type": "text/plain" 
-                },
-                body: encryptedData
+        showToast("Syncing to Google Drive...");
+
+        try {
+            const res = await fetch(`${BACKEND_URL}/api/drive/sync`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, payload: encryptedData })
             });
-            
+
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
             showToast("Cloud Sync Complete! ☁️");
         } catch (e) {
-            showToast("Sync Error");
-            console.error(e);
+            showToast("Sync Failed");
+            alert("Sync Error: " + e.message);
         }
     }
 
     async function restoreFromCloud() {
-        if (!accessToken) return connectDrive();
-        if (!confirm("Overwrite local vault with cloud backup?")) return;
-        
-        showToast("Restoring...");
-        
-        try {
-            const fileId = await getBackupFileId();
-            if (!fileId) return showToast("No cloud backup found.");
+        const userId = localStorage.getItem("vault_user_id");
+        if (!userId) {
+            showToast("Please log in to Google first.");
+            return connectDrive();
+        }
 
-            const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-                headers: { Authorization: `Bearer ${accessToken}` }
+        if (!confirm("Overwrite local vault with cloud backup?")) return;
+
+        showToast("Fetching cloud backup...");
+
+        try {
+            const res = await fetch(`${BACKEND_URL}/api/drive/restore`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId })
             });
-            
-            const payload = await res.text();
-            
-            // Prompt the user for the Master Password to unlock this backup
-            let pass = prompt("Enter the Master Password used for this cloud backup:");
+
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
+
+            const payload = data.payload;
+
+            // Prompt user for master password to verify & decrypt
+            let pass = prompt("Enter Master Password for this backup:");
             if (!pass) return showToast("Restore cancelled.");
-            
+
             try {
-                // Attempt to decrypt the payload using the provided password
                 const testDecrypt = CryptoJS.AES.decrypt(payload, pass).toString(CryptoJS.enc.Utf8);
-                if (!testDecrypt) throw new Error("Key mismatch");
-                
-                // If successful, save the data and sync the local Master Password Hash
+                if (!testDecrypt) throw new Error("Invalid password");
+
                 localStorage.setItem('vault_data', payload);
                 localStorage.setItem('vault_hash', CryptoJS.SHA256(pass).toString());
-                MASTER_KEY = pass; // Set active session key
-                
-                showToast("Restore Complete!");
-                
-                // Immediately log the user in and show the vault
+                MASTER_KEY = pass;
+
+                showToast("Restore Complete! ✅");
                 document.getElementById('onboarding').classList.add('hidden');
                 document.getElementById('unlockSection').classList.add('hidden');
                 document.getElementById('mainContent').classList.remove('hidden');
                 updateDropdown();
-                
             } catch (decErr) {
                 alert("Decryption failed. Incorrect Master Password.");
             }
         } catch (e) {
-            showToast("Restore Error");
-            console.error(e);
+            showToast("Restore Failed");
+            alert("Restore Error: " + e.message);
         }
     }
 
