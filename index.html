@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>CardVault</title>
+    <title>Secure Card Vault</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0B1021">
+    <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="icon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+    <style>
         :root { 
-            --primary: #FCA311; 
-            --bg-main: #0B1021;
-            --bg-card: #151A30;
-            --bg-input: #121629;
-            --border-color: #232B4E;
+            --primary-orange: #f59e0b; 
+            --bg-dark: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
             --text-white: #ffffff;
-            --text-muted: #8B95B1;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --danger: #ef4444;
             --success: #10b981;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
-
         body { 
-            background-color: var(--bg-main);
+            background: #0f172a;
+            background: var(--bg-dark);
             color: var(--text-white);
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
             min-height: 100vh;
             display: flex;
@@ -39,210 +37,206 @@
         }
 
         .container { 
-            width: 100%; max-width: 400px; padding: 2rem 1.5rem;
-            text-align: center; min-height: 100vh; position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            text-align: center;
+            box-sizing: border-box;
+            min-height: 100vh;
+            position: relative;
         }
         
-        #onboarding, #unlockSection, #restoreSection, #recoverySection { margin-top: 4vh; }
+        #onboarding, #unlockSection, #recoverySection, #restoreSection { margin-top: 8vh; }
 
-        h2, h3 { font-weight: 700; margin-bottom: 0.5rem; }
-        .app-title { font-size: 1.8rem; margin-bottom: 0.5rem; }
-        .sub-text { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 2rem; line-height: 1.5; }
+        h2, h3 { font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1rem; }
+        .app-title { font-size: 2.2rem; }
+        .sub-text { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 2rem; }
 
-        /* Shield / Logo Setup */
-        .shield-icon-wrapper {
-            width: 70px; height: 70px; border-radius: 50%;
-            background: rgba(252, 163, 17, 0.1);
-            border: 1px solid rgba(252, 163, 17, 0.2);
-            display: inline-flex; align-items: center; justify-content: center;
-            margin-bottom: 1.5rem; box-shadow: 0 0 40px rgba(252, 163, 17, 0.1);
+        .bio-icon-wrapper { margin-bottom: 2rem; }
+        .bio-icon-circle {
+            width: 110px; height: 110px; border: 1.5px solid rgba(245, 158, 11, 0.4);
+            border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(245, 158, 11, 0.05); box-shadow: 0 0 30px rgba(245, 158, 11, 0.15); margin-bottom: 1rem;
         }
-        .shield-icon-wrapper svg { color: var(--primary); width: 32px; height: 32px; }
+        .bio-icon svg { display: block; width: 60px; height: 60px; color: var(--primary-orange); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.6)); }
+        .bio-icon { color: var(--primary-orange); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
 
-        .step-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 2rem; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); }
-        .dot.active { background: var(--primary); }
-
-        /* Custom Inputs Matching Image */
-        .input-group { text-align: left; margin-bottom: 1.25rem; }
-        .input-label {
-            font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 700; margin-bottom: 8px; margin-left: 4px;
-        }
-        .field-wrapper {
-            position: relative; width: 100%;
-        }
-        .field-icon-left {
-            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-            color: var(--text-muted); width: 18px; height: 18px; pointer-events: none;
-        }
-        .field-icon-right {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: var(--text-muted); cursor: pointer;
-            padding: 4px; display: flex; align-items: center; justify-content: center;
-        }
-        .field-icon-right:hover { color: var(--text-white); }
-        
-        .field-wrapper input, .field-wrapper select, .field-wrapper textarea {
-            width: 100%; background: var(--bg-input); border: 1px solid var(--border-color);
-            color: white; padding: 16px 45px 16px 45px; border-radius: 12px; font-size: 0.95rem; outline: none; transition: 0.2s;
-        }
-        .field-wrapper input:focus { border-color: var(--primary); background: var(--bg-card); }
-        .field-wrapper input::placeholder { color: #4B5563; }
-        
-        /* Specific rules for inputs without left icons */
-        .no-left-icon input, .no-left-icon select, .no-left-icon textarea { padding-left: 16px; }
-        .no-left-icon textarea { resize: none; min-height: 80px; }
-
-        /* Buttons */
         .btn-main {
-            background: var(--primary); color: #000; border: none; padding: 16px;
-            border-radius: 12px; width: 100%; font-size: 1rem; font-weight: 700;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            cursor: pointer; transition: 0.2s; margin-top: 10px; box-shadow: 0 4px 15px rgba(252, 163, 17, 0.2);
+            background: var(--primary-orange); color: #000; border: none; padding: 1rem;
+            border-radius: 14px; width: 100%; font-size: 1rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; transition: 0.2s; margin-bottom: 10px;
         }
-        .btn-main:active { transform: scale(0.98); }
+        .btn-main:active { transform: scale(0.97); }
         
         .btn-ghost, .btn-danger {
-            height: 42px; display: flex; align-items: center; justify-content: center;
-            padding: 0 1rem; border-radius: 10px; width: 100%; cursor: pointer;
-            font-weight: 600; font-size: 0.9rem; transition: 0.2s; background: var(--bg-card); border: 1px solid var(--border-color); color: white; margin-bottom: 10px;
+            height: 38px; display: flex; align-items: center; justify-content: center;
+            padding: 0 0.8rem; border-radius: 8px; width: 100%; cursor: pointer;
+            font-weight: 500; font-size: 0.9rem; transition: 0.2s; box-sizing: border-box;
         }
-        .btn-danger { background: rgba(239, 68, 68, 0.05); color: var(--danger); border-color: rgba(239, 68, 68, 0.2); }
-        .btn-ghost:active, .btn-danger:active { transform: scale(0.98); }
-        .btn-link { background: none; border: none; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; width: 100%; text-decoration: none; padding: 10px; }
+        .btn-ghost { background: var(--glass); color: white; border: 1px solid var(--glass-border); }
+        .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .btn-ghost:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.97); }
+        .btn-danger:active { background: rgba(239, 68, 68, 0.2); transform: scale(0.97); }
 
-        /* Bio Setup Box */
-        .bio-setup-box {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 1.5rem; text-align: left;
-        }
-        .bio-setup-info { display: flex; align-items: center; gap: 12px; }
-        .bio-setup-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
-        
-        /* CSS Toggle Switch */
-        .toggle-switch {
-            width: 44px; height: 24px; background: var(--bg-input); border: 1px solid var(--border-color);
-            border-radius: 12px; position: relative; cursor: pointer; transition: 0.3s; flex-shrink: 0;
-        }
-        .toggle-switch.active { background: var(--primary); border-color: var(--primary); }
-        .toggle-knob {
-            width: 18px; height: 18px; background: var(--text-muted); border-radius: 50%;
-            position: absolute; top: 2px; left: 3px; transition: 0.3s;
-        }
-        .toggle-switch.active .toggle-knob { left: 21px; background: #000; }
+        .btn-link { background: none; border: none; color: var(--text-dim); margin-top: 1rem; font-size: 1rem; cursor: pointer; width: 100%; text-decoration: none; }
 
-        /* Footer Info Box */
-        .info-footer-box {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px; padding: 16px; display: flex; align-items: flex-start; gap: 12px;
-            margin-top: 1.5rem; text-align: left; font-size: 0.75rem; color: var(--text-muted);
+        .fab {
+            position: fixed; bottom: 2rem; right: 2rem; width: 56px; height: 56px;
+            background: var(--primary-orange); color: #000; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 2.5rem;
+            font-weight: 300; line-height: 1; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            cursor: pointer; z-index: 1000; transition: 0.2s; padding-bottom: 4px;
         }
-
-        /* Settings View Styles */
-        .section-label {
-            font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;
-            letter-spacing: 1.5px; font-weight: 700; margin: 1.5rem 0 0.5rem 4px; text-align: left;
-        }
-        .settings-card {
-            background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color);
-            overflow: hidden; display: flex; flex-direction: column;
-        }
-        .settings-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;
-        }
-        .settings-item:active { background: rgba(255,255,255,0.02); }
-        .settings-item:last-child { border-bottom: none; }
-        .settings-item-left { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600; }
-        .item-icon {
-            width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
-        }
-        .item-icon svg { width: 18px; height: 18px; }
-        .settings-chevron { color: var(--text-muted); width: 18px; height: 18px; }
-        
-        .footer-signature { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin: 2rem 0; font-weight: 500; }
-
-        /* Top Action Bar */
-        .top-action-bar {
-            position: sticky; top: 0; margin: -2rem -1.5rem 1.5rem -1.5rem; padding: 15px 1.5rem;
-            background: rgba(11, 16, 33, 0.95); backdrop-filter: blur(10px);
-            z-index: 100; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .back-btn-round {
-            width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card);
-            border: 1px solid var(--border-color); color: var(--text-white); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
-        }
-        .back-btn-round:active { transform: scale(0.9); }
-
-        .profile-btn {
-            width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card);
-            border: 1.5px solid var(--primary); color: var(--primary);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            font-weight: 700; font-size: 1rem; transition: 0.2s; padding: 0; overflow: hidden;
-        }
-
-        /* Generic utilities */
-        .hidden { display: none !important; }
-        #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--text-white); color: black; padding: 0.6rem 1.2rem; border-radius: 20px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-
-        /* Cards Interface */
-        .fab { position: fixed; bottom: 2rem; right: 1.5rem; width: 56px; height: 56px; background: var(--primary); color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 300; line-height: 1; border: none; box-shadow: 0 4px 15px rgba(252, 163, 17, 0.3); cursor: pointer; z-index: 1000; transition: 0.2s; padding-bottom: 4px; }
         .fab:active { transform: scale(0.92); }
-        .card-list-item { background: var(--bg-card); border: 1px solid var(--border-color); padding: 1rem; border-radius: 12px; margin-bottom: 10px; text-align: left; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; }
-        .card-list-item:active { background: var(--bg-input); transform: scale(0.98); }
-        .bank-group-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 1.5rem 0 0.5rem 4px; text-align: left; font-weight: 700; }
-        
-        .form-tabs { display: flex; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 1.5rem; padding: 4px; }
-        .tab-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; transition: 0.2s; border: none; background: transparent; }
-        .tab-btn.active { background: var(--bg-input); color: var(--primary); border: 1px solid var(--border-color); }
 
-        /* Card Visuals */
-        .card-chip { width: 45px; height: 35px; background: linear-gradient(135deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%); border-radius: 6px; margin-bottom: 15px; position: relative; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1); }
+        .form-tabs {
+            display: flex; background: var(--glass); border-radius: 12px; margin-bottom: 1rem; padding: 4px;
+        }
+        .tab-btn {
+            flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer;
+            color: var(--text-dim); font-weight: 600; font-size: 0.9rem; transition: 0.2s; border: none; background: transparent;
+        }
+        .tab-btn.active { background: var(--primary-orange); color: #000; }
+
+        input, select, textarea {
+            background: var(--glass); border: 1px solid var(--glass-border); color: white;
+            padding: 1rem; border-radius: 12px; width: 100%; box-sizing: border-box;
+            margin-bottom: 1rem; font-size: 1rem; outline: none; font-family: inherit;
+        }
+        input::placeholder, textarea::placeholder { color: #64748b; }
+        textarea { resize: none; min-height: 80px; }
+        
+        .pwd-wrapper { position: relative; width: 100%; margin-bottom: 1rem; }
+        .pwd-wrapper input { margin-bottom: 0; padding-right: 45px; }
+        .pwd-toggle { 
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text-dim); cursor: pointer;
+            padding: 4px; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .pwd-toggle:active { transform: translateY(-50%) scale(0.9); }
+        .pwd-toggle:hover { color: var(--text-white); }
+        
+        .cred-group { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 1rem; }
+        .cred-group .pwd-wrapper, .cred-group select { margin-bottom: 0; }
+
+        .card-chip {
+            width: 45px; height: 35px; background: linear-gradient(135deg, #fceabb 0%, #fccd4d 50%, #f8b500 100%);
+            border-radius: 6px; margin-bottom: 15px; position: relative; overflow: hidden; border: 0.5px solid rgba(0,0,0,0.1);
+        }
         .card-chip::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(0,0,0,0.1); }
         .card-chip::after { content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(0,0,0,0.1); }
-        .credit-card { width: 100%; aspect-ratio: 1.58 / 1; border-radius: 20px; padding: 24px; margin: 20px 0; display: flex; flex-direction: column; position: relative; box-sizing: border-box; box-shadow: 0 15px 35px rgba(0,0,0,0.5); overflow: hidden; text-align: left; }
+
+        .credit-card {
+            width: 100%; aspect-ratio: 1.58 / 1; border-radius: 20px; padding: 24px; margin: 20px 0;
+            display: flex; flex-direction: column; position: relative; box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); overflow: hidden; text-align: left;
+        }
         .credit-card::after { content: ''; position: absolute; inset: 0; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); pointer-events: none; }
-        .bank-card-visual { background: linear-gradient(135deg, #1e293b, #0B1021); aspect-ratio: auto; min-height: 140px; justify-content: center; border: 1px solid var(--border-color); }
+        
+        .bank-card-visual {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            aspect-ratio: auto; min-height: 140px; justify-content: center; border: 1px solid var(--glass-border);
+        }
+
         .card-number { font-family: 'Courier New', Courier, monospace; font-size: 1.25rem; letter-spacing: 2px; margin-top: 5px; white-space: nowrap; width: 100%; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
         .card-header-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
         .sub-type-top { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.9; font-weight: 600; margin-top: 5px; }
+
         .card-footer-realistic { margin-top: auto; display: flex; flex-direction: column; gap: 12px; width: 65%; }
         .footer-row { display: flex; gap: 25px; }
         .footer-item { display: flex; flex-direction: column; text-align: left; }
         .footer-item .label { font-size: 0.5rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 2px; letter-spacing: 0.5px; }
         .footer-item .val { font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+
+        .hidden { display: none !important; }
+        
+        .unlock-row { display: flex; gap: 12px; align-items: center; width: 100%; }
+        #bioUnlockBtn { width: 60px; height: 50px; margin-bottom: 10px; flex-shrink: 0; display: flex; }
+        #bioUnlockBtn svg { width: 28px; height: 28px; }
+
+        #toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--primary-orange); color: black;
+            padding: 0.6rem 1.2rem; border-radius: 20px; font-weight: 600; opacity: 0; transition: 0.3s; z-index: 2000;
+        }
+
+        .status-footer { margin-top: 2rem; font-size: 0.75rem; color: #64748b; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .contactless-svg { width: 20px; height: 20px; opacity: 0.8; margin-left: 10px; color: white; }
         .network-logo-container { position: absolute; bottom: 22px; right: 24px; text-align: right; max-width: 30%; }
         .network-main-name { font-size: 1.4rem; font-weight: 900; font-style: italic; letter-spacing: -0.5px; line-height: 1; }
         
+        * { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+        input, textarea { -webkit-user-select: text; user-select: text; }
+
+        .bank-group-title {
+            font-size: 0.8rem; color: var(--primary-orange); text-transform: uppercase;
+            letter-spacing: 1.5px; margin: 1.5rem 0 0.5rem 0; text-align: left;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding-bottom: 5px; font-weight: 700;
+        }
+        .card-list-item {
+            background: var(--glass); border: 1px solid var(--glass-border); padding: 1rem;
+            border-radius: 12px; margin-bottom: 10px; text-align: left; font-weight: 600;
+            cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s;
+        }
+        .card-list-item:active { background: rgba(255, 255, 255, 0.1); transform: scale(0.98); }
+
+        /* Top Action Bar */
+        .top-action-bar {
+            position: sticky; top: 0; margin: -2rem -2rem 1.5rem -2rem; padding: 15px 2rem;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 100; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .profile-btn {
+            width: 38px; height: 38px; border-radius: 50%; background: var(--glass);
+            border: 1.5px solid var(--primary-orange); color: var(--primary-orange);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            font-weight: 700; font-size: 1.1rem; transition: 0.2s; padding: 0; flex-shrink: 0; overflow: hidden;
+        }
+        .profile-btn:active { transform: scale(0.92); background: rgba(245, 158, 11, 0.15); }
+
+        /* Full Screen Profile & Settings */
+        .profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem; }
+        .profile-avatar {
+            width: 70px; height: 70px; border-radius: 50%; background: rgba(245, 158, 11, 0.15);
+            border: 2px solid var(--primary-orange); display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: var(--primary-orange); font-weight: 700; margin-bottom: 10px; overflow: hidden;
+        }
+        .profile-name { font-weight: 700; font-size: 1.2rem; color: white; }
+        .profile-email { font-size: 0.85rem; color: var(--text-dim); }
+        
+        .menu-list { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .menu-item {
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px;
+            border-radius: 12px; background: var(--glass); border: 1px solid var(--glass-border); color: white; cursor: pointer;
+            font-size: 0.95rem; font-weight: 600; transition: 0.2s;
+        }
+        .menu-item:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
+        .menu-item.danger { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+        .menu-item.danger:active { background: rgba(239, 68, 68, 0.15); }
+
         .quick-actions-dock { display: flex; justify-content: space-around; margin: 20px 0; padding: 0 10px; }
-        .quick-action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: none; background: none; color: var(--text-muted); font-size: 0.75rem; font-weight: 600; transition: 0.2s; }
-        .quick-action-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s; }
-        .quick-action-btn:active .quick-action-icon { background: var(--bg-input); transform: scale(0.92); }
+        .quick-action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; border: none; background: none; color: var(--text-dim); font-size: 0.75rem; font-weight: 600; transition: 0.2s; }
+        .quick-action-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--glass); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; color: white; transition: 0.2s; }
+        .quick-action-btn:active .quick-action-icon { background: rgba(255,255,255,0.1); transform: scale(0.92); }
         .qa-danger .quick-action-icon { color: var(--danger); background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); }
 
-        .details-widget { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; overflow: hidden; text-align: left; }
-        .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s; }
+        .details-widget { background: var(--glass); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 24px; overflow: hidden; text-align: left; }
+        .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--glass-border); cursor: pointer; transition: background 0.2s; }
         .detail-row:last-child { border-bottom: none; }
         .detail-row:active { background: rgba(255,255,255,0.05); }
-        .detail-label { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+        .detail-label { color: var(--text-dim); font-size: 0.85rem; font-weight: 500; }
         .detail-value { color: white; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
         .mono { font-family: 'Courier New', Courier, monospace; letter-spacing: 0.5px; }
 
-        .secure-lock { display: flex; align-items: center; gap: 5px; color: var(--primary); font-size: 0.8rem; }
+        .secure-lock { display: flex; align-items: center; gap: 5px; color: var(--primary-orange); font-size: 0.8rem; }
         
-        .notes-widget { background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); margin-bottom: 24px; text-align: left; padding: 16px; cursor: pointer; transition: background 0.2s; }
+        .notes-widget { background: var(--glass); border-radius: 16px; border: 1px solid var(--glass-border); margin-bottom: 24px; text-align: left; padding: 16px; cursor: pointer; transition: background 0.2s; }
         .notes-widget:active { background: rgba(255,255,255,0.05); }
-        .notes-title { color: var(--primary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .notes-title { color: var(--primary-orange); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
         .notes-content { color: white; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; }
-        .notes-empty { color: var(--text-muted); font-style: italic; font-size: 0.85rem; text-align: center; padding: 10px 0; }
-        
-        /* Grid Layouts for split fields */
-        .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .split-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; }
+        .notes-empty { color: var(--text-dim); font-style: italic; font-size: 0.85rem; text-align: center; padding: 10px 0; }
     </style>
 </head>
 <body>
@@ -252,183 +246,128 @@
 <div class="container">
     <input type="file" id="importFile" class="hidden" onchange="importData(this)" accept=".txt">
 
-    <!-- Unified Onboarding / Setup Screen -->
+    <!-- Onboarding Screen -->
     <div id="onboarding" class="hidden">
-        <div id="setupView">
-            <div class="shield-icon-wrapper">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    <path d="M9 12l2 2 4-4"></path>
-                </svg>
-            </div>
-            
-            <h2 class="app-title">Set Up CardVault</h2>
-            <p class="sub-text">Create a master password to protect your cards.<br>This cannot be recovered — remember it well.</p>
-            
-            <div class="step-dots">
-                <div class="dot active"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-label">MASTER PASSWORD</div>
-                <div class="field-wrapper">
-                    <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <input type="password" id="setupPass" placeholder="Create a strong password">
-                    <button type="button" class="field-icon-right" onclick="togglePwd('setupPass', this)">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-label">CONFIRM PASSWORD</div>
-                <div class="field-wrapper">
-                    <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <input type="password" id="setupPass2" placeholder="Re-enter your password">
-                    <button type="button" class="field-icon-right" onclick="togglePwd('setupPass2', this)">
-                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="bio-setup-box" onclick="toggleSetupBio()">
-                <div class="bio-setup-info">
-                    <div class="bio-setup-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; font-size: 0.95rem;">Enable Fingerprint Unlock</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Quick unlock with your fingerprint</div>
-                    </div>
-                </div>
-                <div class="toggle-switch" id="setupBioToggle">
-                    <div class="toggle-knob"></div>
-                </div>
-            </div>
-
-            <button type="button" class="btn-main" onclick="executeSetupFlow()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
-                Create Vault
+        <div id="step1">
+            <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">👋</span></div></div>
+            <h3>Secure Vault</h3>
+            <p class="sub-text">Zero-knowledge local encryption. You hold the only keys.</p>
+            <button type="button" class="btn-main" onclick="nextStep(2)">Get Started</button>
+            <button type="button" class="btn-ghost" onclick="connectDrive()" style="margin-top:12px; color:var(--primary-orange); border-color:var(--primary-orange);">
+                ☁️ Link & Restore from Google
             </button>
+            <button type="button" class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top:10px;">
+                📂 Restore from File Backup
+            </button>
+        </div>
 
-            <div class="info-footer-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <span>All data is encrypted and stored locally on your device. No data is ever sent to any server.</span>
+        <div id="step2" class="hidden">
+            <h3>Set Master Password</h3>
+            <p class="sub-text">This unlocks your vault.</p>
+            <div class="pwd-wrapper">
+                <input type="password" id="setupPass" placeholder="Enter Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('setupPass', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
             </div>
-
-            <button type="button" class="btn-link" style="margin-top: 1.5rem;" onclick="document.getElementById('importFile').click()">
-                📂 Restore from File Backup instead
-            </button>
-            <button type="button" class="btn-link" style="margin-top: 0; color: var(--primary);" onclick="connectDrive()">
-                ☁️ Restore from Google Drive
-            </button>
+            <div class="pwd-wrapper">
+                <input type="password" id="setupPass2" placeholder="Confirm Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('setupPass2', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
+            <button type="button" class="btn-main" onclick="createVaultStep()">Continue</button>
+        </div>
+        <div id="step3" class="hidden">
+            <div class="bio-icon-wrapper"><div class="bio-icon-circle"><span class="bio-icon">🧬</span></div></div>
+            <h3>Biometrics</h3>
+            <p class="sub-text">Enable fingerprint access?</p>
+            <button type="button" class="btn-main" onclick="enableBioSetup()">Enable Now</button>
+            <button type="button" class="btn-link" onclick="finishSetup()">Skip</button>
         </div>
     </div>
 
     <!-- Unlock Section -->
     <div id="unlockSection" class="hidden">
-        <div class="shield-icon-wrapper" style="margin-bottom: 2rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-            </svg>
-        </div>
-        <h2 class="app-title">CardVault</h2>
-        <p class="sub-text">Securely access your encrypted vault.</p>
-
-        <div class="input-group">
-            <div class="input-label">MASTER PASSWORD</div>
-            <div class="field-wrapper">
-                <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <input type="password" id="masterPass" placeholder="Enter your password">
-                <button type="button" class="field-icon-right" onclick="togglePwd('masterPass', this)">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </button>
+        <div class="bio-icon-wrapper">
+            <div class="bio-icon-circle">
+                <span class="bio-icon">
+                    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/><path d="M11 22H13"/><path d="M15 21H17"/><path d="M7 21H9"/></svg>
+                </span>
             </div>
         </div>
+        <h2 class="app-title">Card Vault</h2>
+        <p class="sub-text">Securely access your cards</p>
 
-        <button type="button" class="btn-main" onclick="unlockVault()" style="margin-bottom: 15px;">
-            Unlock Vault
-        </button>
+        <div class="pwd-wrapper">
+            <input type="password" id="masterPass" placeholder="••••••••">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('masterPass', this)" tabindex="-1">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+        </div>
 
-        <button type="button" id="bioUnlockBtn" class="btn-ghost hidden" onclick="unlockWithBiometric()" style="margin-bottom: 15px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="margin-right:8px;"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
-            Use Fingerprint
-        </button>
+        <div class="unlock-row">
+            <button type="button" class="btn-main" onclick="unlockVault()" style="margin-bottom: 10px;">
+                Unlock Vault
+            </button>
+            <button type="button" id="bioUnlockBtn" class="btn-main hidden" onclick="unlockWithBiometric()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
+            </button>
+        </div>
 
         <button type="button" id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
 
-        <div class="info-footer-box" style="margin-top: 2rem;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span>Stored securely on this device only.</span>
+        <div class="status-footer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Stored locally on this device only
         </div>
     </div>
 
-    <!-- Unified Restore Section -->
+    <!-- Unified Restore Section for Drive & Local -->
     <div id="restoreSection" class="hidden">
         <h3 id="restoreTitle">Restore Backup</h3>
-        <p class="sub-text" id="restoreSubText" style="margin-bottom:1.5rem;">Enter the password used when this backup was created.</p>
-        
-        <div class="input-group">
-            <div class="input-label">BACKUP PASSWORD</div>
-            <div class="field-wrapper">
-                <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                <input type="password" id="restorePass" placeholder="Master Password">
-                <button type="button" class="field-icon-right" onclick="togglePwd('restorePass', this)">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </button>
-            </div>
+        <p class="sub-text" id="restoreSubText">Enter the password used when this backup was created.</p>
+        <div class="pwd-wrapper">
+            <input type="password" id="restorePass" placeholder="Master Password">
+            <button type="button" class="pwd-toggle" onclick="togglePwd('restorePass', this)" tabindex="-1">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
         </div>
-
         <button type="button" class="btn-main" onclick="confirmRestore()">Restore Data</button>
-        <button type="button" class="btn-ghost" onclick="cancelRestore()" style="margin-top:10px;">Cancel</button>
+        <button type="button" class="btn-link" onclick="cancelRestore()">Cancel</button>
     </div>
 
     <!-- Recovery Section -->
     <div id="recoverySection" class="hidden">
-        <div class="shield-icon-wrapper" style="margin-bottom: 1.5rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-        </div>
-        <h3 style="margin-bottom:0.5rem;">Reset Vault Access</h3>
-        <p class="sub-text" style="margin-bottom:1.5rem;">Enter your 16-character Recovery Key below.</p>
-        
-        <div class="input-group">
-            <div class="input-label">RECOVERY KEY</div>
-            <div class="field-wrapper no-left-icon">
-                <input type="text" id="rkInput" placeholder="XXXX-XXXX-XXXX-XXXX">
-            </div>
-        </div>
-        
-        <button type="button" class="btn-main" onclick="handleRecovery()">Verify Key</button>
-        <button type="button" class="btn-ghost" onclick="location.reload()" style="margin-top:10px;">Cancel</button>
+        <h3>Reset Vault</h3>
+        <p class="sub-text">Enter your 16-character Recovery Key:</p>
+        <input type="text" id="rkInput" placeholder="XXXX-XXXX-XXXX-XXXX">
+        <button type="button" class="btn-main" onclick="handleRecovery()">Reset Access</button>
+        <button type="button" class="btn-link" onclick="location.reload()">Cancel</button>
     </div>
 
     <!-- Main Authenticated Content -->
     <div id="mainContent" class="hidden">
         
-        <!-- Top Navigation Bar -->
-        <div class="top-action-bar">
+<div class="top-action-bar">
             <!-- Left Side Actions -->
             <div style="display:flex; align-items: center; gap: 12px; z-index: 2;">
                 <button type="button" class="profile-btn" id="topProfileAvatar" onclick="openProfileSettings()" title="Profile & Settings">
                     U
                 </button>
-                <button type="button" id="settingsBackBtn" class="back-btn-round hidden" onclick="closeProfileSettings()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                <button type="button" id="settingsBackBtn" class="btn-ghost hidden" style="padding: 0 10px; height: 38px; width: auto; border-color: var(--primary-orange); color: var(--primary-orange);" onclick="closeProfileSettings()">
+                  Back
                 </button>
             </div>
             
             <!-- Perfectly Centered Title -->
-            <h2 id="topBarTitle" style="margin:0; font-size:1.1rem; color:var(--text-white); font-weight:700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;">
+            <h2 id="topBarTitle" style="margin:0; font-size:1.15rem; color:var(--text-white); font-weight:700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;">
                 My Vault
             </h2>
 
             <!-- Right Side Actions -->
             <div style="display:flex; gap:8px; align-items: center; z-index: 2;">
-                <button type="button" class="btn-danger" style="width:36px; height:36px; padding:0; margin:0; border-radius:10px;" onclick="handleVaultLogout()" title="Lock Vault">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </button>
+                <button type="button" class="btn-danger" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="handleVaultLogout()" title="Lock Vault">🔒</button>
             </div>
         </div>
 
@@ -437,131 +376,63 @@
         <!-- Cards Interface -->
         <div id="cardListView"></div>
         <div id="cardDisplay"></div>
-        <button type="button" class="fab" id="actionBtn" onclick="handleMainAction()">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-        </button>
+        <button type="button" class="fab" id="actionBtn" onclick="handleMainAction()">+</button>
 
-        <!-- Redesigned Settings Menu -->
-        <div id="profileSettingsView" class="hidden">
+        <!-- Full Screen Profile & Settings Section -->
+        <div id="profileSettingsView" class="hidden" style="padding-top: 1rem;">
             
-            <!-- Change Password Sub-View -->
+            <div class="profile-header">
+                <div class="profile-avatar" id="settingsAvatar">U</div>
+                <div class="profile-name" id="settingsUserName">Prasanna Kumar</div>
+                <div class="profile-email" id="settingsUserEmail">Offline Account</div>
+            </div>
+
+            <!-- Profile Menu List -->
+            <div id="profileMenuList" class="menu-list">
+                <button type="button" class="menu-item" onclick="enterPasswordChangeMode()">🔑 Change Master Password</button>
+                
+                <button type="button" class="menu-item" id="bioSetupBtn" onclick="registerBiometric()">🔐 Enable Biometrics</button>
+                <button type="button" class="menu-item danger hidden" id="bioDisableBtn" onclick="disableBiometric()">❌ Disable Biometrics</button>
+                
+                <button type="button" class="menu-item" onclick="generateAndSaveRK()">🛡️ Generate Recovery Key</button>
+                <button type="button" class="menu-item" onclick="exportData()">📦 Backup to Local File</button>
+
+                <hr style="border-color: var(--glass-border); width: 100%; margin: 10px 0;">
+
+                <button type="button" class="menu-item" id="googleLinkBtn" onclick="connectDrive()">☁️ Link Google Account</button>
+                <button type="button" class="menu-item hidden" id="googleSyncBtn" onclick="syncToCloud(true)">🔄 Sync to Google Drive</button>
+                <button type="button" class="menu-item danger hidden" id="googleUnlinkBtn" onclick="logoutGoogle()">🚪 Logout</button>
+            </div>
+
+            <!-- Isolated Change Password View (Only visible when changing password) -->
             <div id="passChangeView" class="hidden">
-                <div class="shield-icon-wrapper" style="margin-bottom: 1.5rem; width:56px; height:56px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
-                </div>
-                <h3 style="margin-bottom: 0.5rem;">Change Password</h3>
-                <p class="sub-text" style="margin-bottom: 2rem;">Update the master key for your local vault.</p>
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-orange);">Change Password</h3>
                 
-                <div class="input-group">
-                    <div class="input-label">CURRENT PASSWORD</div>
-                    <div class="field-wrapper">
-                        <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        <input type="password" id="settCurrPass" placeholder="Enter current password">
-                        <button type="button" class="field-icon-right" onclick="togglePwd('settCurrPass', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                    </div>
+                <div class="pwd-wrapper">
+                    <input type="password" id="settCurrPass" placeholder="Current Master Password">
+                    <button type="button" class="pwd-toggle" onclick="togglePwd('settCurrPass', this)" tabindex="-1">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
                 </div>
                 
-                <div class="input-group">
-                    <div class="input-label">NEW PASSWORD</div>
-                    <div class="field-wrapper">
-                        <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        <input type="password" id="settNewPass" placeholder="Enter new password">
-                        <button type="button" class="field-icon-right" onclick="togglePwd('settNewPass', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                    </div>
+                <div class="pwd-wrapper">
+                    <input type="password" id="settNewPass" placeholder="New Master Password">
+                    <button type="button" class="pwd-toggle" onclick="togglePwd('settNewPass', this)" tabindex="-1">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
                 </div>
 
-                <div class="input-group">
-                    <div class="input-label">CONFIRM NEW PASSWORD</div>
-                    <div class="field-wrapper">
-                        <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        <input type="password" id="settConfirmPass" placeholder="Re-enter new password">
-                        <button type="button" class="field-icon-right" onclick="togglePwd('settConfirmPass', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                    </div>
+                <div class="pwd-wrapper">
+                    <input type="password" id="settConfirmPass" placeholder="Confirm New Master Password">
+                    <button type="button" class="pwd-toggle" onclick="togglePwd('settConfirmPass', this)" tabindex="-1">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
                 </div>
 
                 <button type="button" class="btn-main" onclick="changePassword()">Save New Password</button>
-                <button type="button" class="btn-ghost" onclick="exitPasswordChangeMode()" style="margin-top:10px;">Cancel</button>
+                <button type="button" class="btn-ghost" onclick="exitPasswordChangeMode()">Cancel</button>
             </div>
-
-            <!-- Main Settings View -->
-            <div id="generalSettingsGroup">
-                
-                <div class="section-label">SECURITY</div>
-                <div class="settings-card" style="margin-bottom: 24px;">
-                    <div class="settings-item" onclick="enterPasswordChangeMode()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(252, 163, 17, 0.1); color: #fca311;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
-                            </div>
-                            Change Password
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                    
-                    <div class="settings-item" onclick="handleBioToggle()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12"/><path d="M5 12C5 8.13401 8.13401 5 12 5C15.866 5 19 8.13401 19 12"/><path d="M8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12"/><path d="M12 11V13"/><path d="M12 17V17.01"/></svg>
-                            </div>
-                            Biometric Unlock
-                        </div>
-                        <div class="toggle-switch" id="settingsBioToggle"><div class="toggle-knob"></div></div>
-                    </div>
-
-                    <div class="settings-item" onclick="generateAndSaveRK()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                            </div>
-                            Generate Recovery Key
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-
-                    <div class="settings-item" onclick="handleVaultLogout()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            </div>
-                            Lock Now
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                </div>
-
-                <div class="section-label">BACKUP & RESTORE</div>
-                <div class="settings-card" style="margin-bottom: 24px;">
-                    <div class="settings-item" onclick="exportData()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                            </div>
-                            Export Local Backup
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                    
-                    <div class="settings-item" onclick="document.getElementById('importFile').click()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            </div>
-                            Import Local Backup
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                </div>
-
-                <div class="section-label">CLOUD SYNC</div>
-                <div class="settings-card" id="cloudCard">
-                    <!-- Dynamic Cloud Settings handled by updateProfileUI() -->
-                </div>
-
-                <div class="footer-signature">
-                    Made by Prasanna with ❤️
-                </div>
-
-            </div>
+            
         </div>
 
         <!-- Add / Edit Form -->
@@ -575,156 +446,95 @@
             <input type="hidden" id="itemType" value="card">
 
             <div id="cardFields">
-                <div class="input-group">
-                    <div class="input-label">NICKNAME</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="text" id="nick" placeholder="e.g., HDFC Millennia">
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <div class="input-label">CARD NETWORK</div>
-                    <div class="field-wrapper no-left-icon">
-                        <select id="type">
-                            <optgroup label="Visa">
-                                <option value="Visa Classic">Visa Classic</option>
-                                <option value="Visa Platinum">Visa Platinum</option>
-                                <option value="Visa Signature">Visa Signature</option>
-                                <option value="Visa Infinite">Visa Infinite</option>
-                            </optgroup>
-                            <optgroup label="Mastercard">
-                                <option value="Mastercard Standard">Mastercard Standard</option>
-                                <option value="Mastercard World">Mastercard World</option>
-                                <option value="Mastercard World Elite">Mastercard World Elite</option>
-                            </optgroup>
-                            <optgroup label="RuPay">
-                                <option value="RuPay Classic">RuPay Classic</option>
-                                <option value="RuPay Platinum">RuPay Platinum</option>
-                                <option value="RuPay Select">RuPay Select</option>
-                            </optgroup>
-                            <optgroup label="American Express">
-                                <option value="Amex Platinum">Amex Platinum</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <div class="input-label">CARD NUMBER</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="tel" id="num" placeholder="0000 0000 0000 0000">
-                    </div>
-                </div>
-                
-                <div class="input-group">
-                    <div class="input-label">CARDHOLDER NAME</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="text" id="name" placeholder="Name on card">
-                    </div>
-                </div>
-
-                <div class="split-grid">
-                    <div class="input-group">
-                        <div class="input-label">EXPIRY</div>
-                        <div class="field-wrapper no-left-icon">
-                            <input type="tel" id="exp" placeholder="MM/YY">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <div class="input-label">CVV</div>
-                        <div class="field-wrapper no-left-icon">
-                            <input type="tel" id="cvv" placeholder="123">
-                        </div>
-                    </div>
+                <input type="text" id="nick" placeholder="Nickname (e.g., HDFC Millennia)">
+                <select id="type">
+                    <optgroup label="Visa">
+                        <option value="Visa Classic">Visa Classic</option>
+                        <option value="Visa Platinum">Visa Platinum</option>
+                        <option value="Visa Signature">Visa Signature</option>
+                        <option value="Visa Infinite">Visa Infinite</option>
+                    </optgroup>
+                    <optgroup label="Mastercard">
+                        <option value="Mastercard Standard">Mastercard Standard</option>
+                        <option value="Mastercard World">Mastercard World</option>
+                        <option value="Mastercard World Elite">Mastercard World Elite</option>
+                    </optgroup>
+                    <optgroup label="RuPay">
+                        <option value="RuPay Classic">RuPay Classic</option>
+                        <option value="RuPay Platinum">RuPay Platinum</option>
+                        <option value="RuPay Select">RuPay Select</option>
+                    </optgroup>
+                    <optgroup label="American Express">
+                        <option value="Amex Platinum">Amex Platinum</option>
+                    </optgroup>
+                </select>
+                <input type="tel" id="num" placeholder="Card Number">
+                <input type="text" id="name" placeholder="Cardholder Name">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="tel" id="exp" placeholder="MM/YY">
+                    <input type="tel" id="cvv" placeholder="CVV">
                 </div>
             </div>
 
             <div id="bankFields" class="hidden">
-                <div class="input-group">
-                    <div class="input-label">BANK NAME</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="text" id="bankNick" placeholder="e.g., HDFC Bank">
+                <input type="text" id="bankNick" placeholder="Bank Name (e.g., HDFC Bank)">
+                <input type="text" id="userId" placeholder="User ID / Customer ID">
+                
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="loginPass" placeholder="Login Password">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('loginPass', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
                     </div>
+                    <select id="loginExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
                 </div>
                 
-                <div class="input-group">
-                    <div class="input-label">USER ID / CUST ID</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="text" id="userId" placeholder="Enter User ID">
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="profilePass" placeholder="Profile Password">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('profilePass', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
                     </div>
-                </div>
-                
-                <div class="cred-group split-2-1">
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">LOGIN PASSWORD</div>
-                        <div class="field-wrapper">
-                            <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            <input type="password" id="loginPass" placeholder="Password">
-                            <button type="button" class="field-icon-right" onclick="togglePwd('loginPass', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                        </div>
-                    </div>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">EXPIRY</div>
-                        <div class="field-wrapper no-left-icon">
-                            <select id="loginExp">
-                                <option value="0">None</option><option value="1">1 M</option><option value="3">3 M</option><option value="6">6 M</option><option value="12">1 Yr</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cred-group split-2-1">
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">PROFILE PASSWORD</div>
-                        <div class="field-wrapper">
-                            <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            <input type="password" id="profilePass" placeholder="Password">
-                            <button type="button" class="field-icon-right" onclick="togglePwd('profilePass', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                        </div>
-                    </div>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">EXPIRY</div>
-                        <div class="field-wrapper no-left-icon">
-                            <select id="profileExp">
-                                <option value="0">None</option><option value="1">1 M</option><option value="3">3 M</option><option value="6">6 M</option><option value="12">1 Yr</option>
-                            </select>
-                        </div>
-                    </div>
+                    <select id="profileExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
                 </div>
 
-                <div class="cred-group split-2-1">
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">APP MPIN</div>
-                        <div class="field-wrapper">
-                            <svg class="field-icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                            <input type="password" id="mpin" placeholder="PIN">
-                            <button type="button" class="field-icon-right" onclick="togglePwd('mpin', this)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                        </div>
+                <div class="cred-group">
+                    <div class="pwd-wrapper">
+                        <input type="password" id="mpin" placeholder="MPIN (Mobile App)">
+                        <button type="button" class="pwd-toggle" onclick="togglePwd('mpin', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
                     </div>
-                    <div class="input-group" style="margin-bottom:0;">
-                        <div class="input-label">EXPIRY</div>
-                        <div class="field-wrapper no-left-icon">
-                            <select id="mpinExp">
-                                <option value="0">None</option><option value="1">1 M</option><option value="3">3 M</option><option value="6">6 M</option><option value="12">1 Yr</option>
-                            </select>
-                        </div>
-                    </div>
+                    <select id="mpinExp">
+                        <option value="0">No Expiry</option>
+                        <option value="1">1 Month</option>
+                        <option value="2">2 Months</option>
+                        <option value="3">3 Months</option>
+                        <option value="6">6 Months</option>
+                        <option value="12">1 Year</option>
+                    </select>
                 </div>
                 
-                <div class="input-group">
-                    <div class="input-label">CIF NUMBER (OPTIONAL)</div>
-                    <div class="field-wrapper no-left-icon">
-                        <input type="text" id="cif" placeholder="Enter CIF">
-                    </div>
-                </div>
+                <input type="text" id="cif" placeholder="CIF Number (Optional)">
             </div>
             
-            <div class="input-group">
-                <div class="input-label">SECURE NOTES</div>
-                <div class="field-wrapper no-left-icon">
-                    <textarea id="notes" placeholder="e.g., ATM PIN, Support numbers"></textarea>
-                </div>
-            </div>
+            <textarea id="notes" placeholder="Secure Notes (e.g., ATM PIN, Support numbers)"></textarea>
 
             <button type="button" class="btn-main" onclick="saveItem()">Save Securely</button>
             <button type="button" class="btn-ghost" onclick="cancelForm()">Cancel</button>
@@ -772,25 +582,23 @@
         if (!timestamp || !months || months === "0") return null;
         const d = new Date(timestamp);
         d.setMonth(d.getMonth() + parseInt(months));
+        
         const mNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const day = String(d.getDate()).padStart(2, '0');
         const month = mNames[d.getMonth()];
         const year = d.getFullYear();
+        
         return `${day}-${month}-${year}`;
     }
 
     function nextStep(n){
         document.getElementById("step1").classList.add("hidden");
-        document.getElementById("setupView").classList.remove("hidden");
+        document.getElementById("step2").classList.add("hidden");
+        document.getElementById("step3").classList.add("hidden");
+        document.getElementById("step"+n).classList.remove("hidden");
     }
 
-    // Toggle Bio visual state in Setup Screen
-    function toggleSetupBio() {
-        const t = document.getElementById("setupBioToggle");
-        t.classList.toggle("active");
-    }
-
-    async function executeSetupFlow() {
+    function createVaultStep(){
         const p1=document.getElementById("setupPass").value;
         const p2=document.getElementById("setupPass2").value;
 
@@ -799,17 +607,17 @@
 
         MASTER_KEY=p1;
         localStorage.setItem("vault_hash", CryptoJS.SHA256(p1).toString());
+        nextStep(3);
+    }
 
-        const bioRequested = document.getElementById("setupBioToggle").classList.contains("active");
-        
-        if(bioRequested) {
-            try {
-                await registerBiometricSilently();
-            } catch(e) {
-                console.log("Bio setup skipped or failed", e);
-            }
+    async function enableBioSetup(){
+        try{
+            await registerBiometric();
+            finishSetup();
+        }catch(e){
+            alert("Biometric setup failed.");
+            finishSetup();
         }
-        finishSetup();
     }
 
     function finishSetup(){
@@ -835,42 +643,53 @@
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
 
-    window.addEventListener("load", () => {
-        if (window.google) {
-            codeClient = google.accounts.oauth2.initCodeClient({
-                client_id: GOOGLE_CLIENT_ID,
-                scope: "https://www.googleapis.com/auth/drive.file openid email profile",
-                ux_mode: "popup",
-                prompt: "consent",
-                callback: async (response) => {
-                    if (response.error) {
-                        showToast("Google connection failed");
-                        return;
-                    }
-                    showToast("Connecting account...");
-                    try {
-                        const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ code: response.code, redirectUri: "postmessage" })
-                        });
-                        const data = await res.json();
-                        if (data.error) throw new Error(data.error);
-
-                        localStorage.setItem("vault_user_id", data.userId);
-                        if (data.email) localStorage.setItem("vault_user_email", data.email);
-                        if (data.name) localStorage.setItem("vault_user_name", data.name);
-                        if (data.picture) localStorage.setItem("vault_user_picture", data.picture);
-
-                        showToast("Google Linked!");
-                        updateProfileUI();
-                        await restoreFromCloud(true);
-                    } catch (err) {
-                        alert("Google Authentication Error: " + err.message);
-                    }
+    // --- 1. Separate Google Initialization --- //
+    function initGoogleServices() {
+        if (!window.google || codeClient) return; // Prevent double-loading
+        
+        codeClient = google.accounts.oauth2.initCodeClient({
+            client_id: GOOGLE_CLIENT_ID,
+            scope: "https://www.googleapis.com/auth/drive.file openid email profile",
+            ux_mode: "popup",
+            prompt: "consent",
+            callback: async (response) => {
+                if (response.error) {
+                    showToast("Google connection failed");
+                    return;
                 }
-            });
-        }
+
+                showToast("Connecting account...");
+                try {
+                    const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ code: response.code, redirectUri: "postmessage" })
+                    });
+
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error);
+
+                    localStorage.setItem("vault_user_id", data.userId);
+                    if (data.email) localStorage.setItem("vault_user_email", data.email);
+                    if (data.name) localStorage.setItem("vault_user_name", data.name);
+                    if (data.picture) localStorage.setItem("vault_user_picture", data.picture);
+
+                    showToast("Google Linked!");
+                    updateProfileUI();
+
+                    // Restore immediately if vault is empty/locked
+                    await restoreFromCloud(true);
+                } catch (err) {
+                    alert("Google Authentication Error: " + err.message);
+                }
+            }
+        });
+    }
+
+    // --- 2. Update Window Load --- //
+    window.addEventListener("load", () => {
+        // Initialize Google immediately
+        initGoogleServices();
 
         const hasVault = localStorage.getItem("vault_hash");
         const bioEnabled = localStorage.getItem("vault_bio_enabled") === "true";
@@ -889,6 +708,21 @@
         updateProfileUI();
     });
 
+    // --- 3. Smarter Connect Drive Function --- //
+    function connectDrive() {
+        // If it failed to load on startup, force it to load now before connecting
+        if (!codeClient) {
+            initGoogleServices();
+        }
+        
+        if (!codeClient) {
+            return alert("Google services are still loading or blocked by your browser. Please try again in a moment.");
+        }
+        
+        codeClient.requestCode();
+    }
+
+
     function unlockVault() {
         const pass = document.getElementById('masterPass').value;
         const storedHash = localStorage.getItem('vault_hash');
@@ -906,61 +740,49 @@
         updateProfileUI();
     }
 
-    // --- Profile & Settings UI Management --- //
+    // --- Profile UI Management --- //
     function updateProfileUI() {
         const email = localStorage.getItem("vault_user_email");
+        const name = localStorage.getItem("vault_user_name") || "Prasanna Kumar";
         const pictureUrl = localStorage.getItem("vault_user_picture");
+        const initial = email ? email.charAt(0).toUpperCase() : name.charAt(0).toUpperCase();
 
         const topAvatar = document.getElementById("topProfileAvatar");
-        const cloudCard = document.getElementById("cloudCard");
+        const settingsAvatar = document.getElementById("settingsAvatar");
+        const settingsName = document.getElementById("settingsUserName");
+        const settingsEmail = document.getElementById("settingsUserEmail");
+        
+        const googleLinkBtn = document.getElementById("googleLinkBtn");
+        const googleSyncBtn = document.getElementById("googleSyncBtn");
+        const googleUnlinkBtn = document.getElementById("googleUnlinkBtn");
 
         const renderAvatar = (el) => {
             if (!el) return;
             if (pictureUrl && pictureUrl !== "undefined") {
+                // Added referrerpolicy to prevent browser blocking
                 el.innerHTML = `<img src="${pictureUrl}" referrerpolicy="no-referrer" style="width:100%; height:100%; border-radius:50%; object-fit:cover; pointer-events:none;">`;
                 el.style.border = "none";
             } else {
-                el.innerHTML = "U";
-                el.style.border = "1.5px solid var(--primary)";
+                el.innerHTML = initial;
+                el.style.border = "1.5px solid var(--primary-orange)";
             }
         };
 
         renderAvatar(topAvatar);
+        renderAvatar(settingsAvatar);
 
-        if(cloudCard) {
-            if(email) {
-                cloudCard.innerHTML = `
-                    <div class="settings-item" onclick="syncToCloud(true)">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                            </div>
-                            Sync to Google Drive
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                    <div class="settings-item" onclick="logoutGoogle()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                            </div>
-                            Unlink (${email.split('@')[0]})
-                        </div>
-                    </div>`;
-            } else {
-                cloudCard.innerHTML = `
-                    <div class="settings-item" onclick="connectDrive()">
-                        <div class="settings-item-left">
-                            <div class="item-icon" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
-                            </div>
-                            Link Google Account
-                        </div>
-                        <svg class="settings-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>`;
-            }
+        if (settingsName) settingsName.innerText = name;
+        if (settingsEmail) settingsEmail.innerText = email || "Offline Mode (Local Storage Only)";
+
+        if (email) {
+            if (googleLinkBtn) googleLinkBtn.classList.add("hidden");
+            if (googleSyncBtn) googleSyncBtn.classList.remove("hidden");
+            if (googleUnlinkBtn) googleUnlinkBtn.classList.remove("hidden");
+        } else {
+            if (googleLinkBtn) googleLinkBtn.classList.remove("hidden");
+            if (googleSyncBtn) googleSyncBtn.classList.add("hidden");
+            if (googleUnlinkBtn) googleUnlinkBtn.classList.add("hidden");
         }
-
         updateBiometricUI();
     }
 
@@ -1000,12 +822,14 @@
     }
 
     function enterPasswordChangeMode() {
-        document.getElementById('generalSettingsGroup').classList.add('hidden');
+        document.querySelector('.profile-header').classList.add('hidden');
+        document.getElementById('profileMenuList').classList.add('hidden');
         document.getElementById('passChangeView').classList.remove('hidden');
     }
 
     function exitPasswordChangeMode() {
-        document.getElementById('generalSettingsGroup').classList.remove('hidden');
+        document.querySelector('.profile-header').classList.remove('hidden');
+        document.getElementById('profileMenuList').classList.remove('hidden');
         document.getElementById('passChangeView').classList.add('hidden');
         
         document.getElementById('settCurrPass').value = "";
@@ -1127,7 +951,6 @@
 
     function generateAndSaveRK() {
         const curr = prompt("Enter your Master Password to generate a Recovery Key:");
-        if(!curr) return;
         if (CryptoJS.SHA256(curr).toString() !== localStorage.getItem('vault_hash')) return alert("Password incorrect!");
         let r = ""; const c = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         for(let i=0; i<16; i++) { if(i>0 && i%4===0) r+="-"; r+=c.charAt(Math.floor(Math.random()*c.length)); }
@@ -1407,7 +1230,7 @@
         const items = getCards().sort((a,b)=>a.nick.localeCompare(b.nick)); 
         
         if (items.length === 0) {
-            listView.innerHTML = '<p class="sub-text" style="margin-top:20px; text-align:center;">No items saved yet.</p>';
+            listView.innerHTML = '<p class="sub-text" style="margin-top:20px;">No items saved yet.</p>';
             return;
         }
 
@@ -1433,8 +1256,8 @@
             groupedItems[bank].forEach(item => {
                 const isBank = item.itemType === 'netbanking';
                 const iconSvg = isBank 
-                    ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
-                    : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
+                    ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-orange)"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`
+                    : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-orange)"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`;
                 
                 const label = isBank ? `${item.nick} (NetBanking)` : item.nick;
 
@@ -1613,21 +1436,21 @@
             display.innerHTML = `
                 <div class="credit-card bank-card-visual">
                     <h3 style="margin:0; font-size:1.5rem; color:white; display:flex; align-items:center; gap:10px;">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/></svg>
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary-orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/></svg>
                         ${item.nick}
                     </h3>
-                    <p style="color: var(--text-muted); margin: 5px 0 0 0; font-weight:500;">NetBanking Credentials</p>
+                    <p style="color: var(--text-dim); margin: 5px 0 0 0; font-weight:500;">NetBanking Credentials</p>
                 </div>
                 
                 <div class="details-widget">
                     <div class="detail-row" onclick="copy('${item.userId}', 'User ID Copied')">
                         <span class="detail-label">User / Cust ID</span>
-                        <span class="detail-value mono">${item.userId} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+                        <span class="detail-value mono">${item.userId} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
                     </div>
                     <div class="detail-row" onclick="secureActionAndCopy('${item.loginPass}', 'Login Password')">
                         <div style="display:flex; flex-direction:column; gap:2px;">
                             <span class="detail-label">Login Pass</span>
-                            ${lExpStr ? `<span style="font-size:0.65rem; color:var(--text-muted);">Exp: ${lExpStr}</span>` : ''}
+                            ${lExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${lExpStr}</span>` : ''}
                         </div>
                         <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
                     </div>
@@ -1635,7 +1458,7 @@
                     <div class="detail-row" onclick="secureActionAndCopy('${item.profilePass}', 'Profile Password')">
                         <div style="display:flex; flex-direction:column; gap:2px;">
                             <span class="detail-label">Profile Pass</span>
-                            ${pExpStr ? `<span style="font-size:0.65rem; color:var(--text-muted);">Exp: ${pExpStr}</span>` : ''}
+                            ${pExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${pExpStr}</span>` : ''}
                         </div>
                         <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
                     </div>` : ''}
@@ -1643,21 +1466,21 @@
                     <div class="detail-row" onclick="secureActionAndCopy('${item.mpin}', 'MPIN')">
                         <div style="display:flex; flex-direction:column; gap:2px;">
                             <span class="detail-label">MPIN</span>
-                            ${mExpStr ? `<span style="font-size:0.65rem; color:var(--text-muted);">Exp: ${mExpStr}</span>` : ''}
+                            ${mExpStr ? `<span style="font-size:0.65rem; color:var(--text-dim);">Exp: ${mExpStr}</span>` : ''}
                         </div>
                         <span class="secure-lock"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Protected</span>
                     </div>` : ''}
                     ${item.cif ? `
                     <div class="detail-row" onclick="copy('${item.cif}', 'CIF Copied')">
                         <span class="detail-label">CIF Number</span>
-                        <span class="detail-value mono">${item.cif} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
+                        <span class="detail-value mono">${item.cif} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></span>
                     </div>` : ''}
                 </div>
                 
                 ${quickActionsHtml}
                 ${notesHtml}
                 
-                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary); color:var(--primary);" onclick="clearSelection()">
+                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
                     ⬅️ Back to List
                 </button>
             `;
@@ -1716,7 +1539,7 @@
                 ${quickActionsHtml}
                 ${notesHtml}
                 
-                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary); color:var(--primary);" onclick="clearSelection()">
+                <button type="button" class="btn-ghost" style="margin-bottom:20px; height: 45px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="clearSelection()">
                     ⬅️ Back to List
                 </button>`;
         }
@@ -1725,15 +1548,21 @@
 
     function updateBiometricUI() {
         const bioUnlockBtn = document.getElementById("bioUnlockBtn");
+        const setupBtn = document.getElementById('bioSetupBtn');
+        const disableBtn = document.getElementById('bioDisableBtn');
         const enabled = localStorage.getItem("vault_bio_enabled") === "true";
 
         if (bioUnlockBtn) {
             enabled ? bioUnlockBtn.classList.remove("hidden") : bioUnlockBtn.classList.add("hidden");
         }
-        
-        const settingsBioToggle = document.getElementById("settingsBioToggle");
-        if(settingsBioToggle) {
-            enabled ? settingsBioToggle.classList.add("active") : settingsBioToggle.classList.remove("active");
+        if (setupBtn && disableBtn) {
+            if (enabled) {
+                setupBtn.classList.add("hidden");
+                disableBtn.classList.remove("hidden");
+            } else {
+                setupBtn.classList.remove("hidden");
+                disableBtn.classList.add("hidden");
+            }
         }
     }
 
@@ -1742,49 +1571,37 @@
     function base64ToBuffer(base64) { return Uint8Array.from(atob(base64), c => c.charCodeAt(0)); }
     function randomChallenge() { return Uint8Array.from(window.crypto.getRandomValues(new Uint8Array(32))); }
 
-    async function handleBioToggle() {
-        const enabled = localStorage.getItem("vault_bio_enabled") === "true";
-        if(enabled) {
-            if(confirm("Verify identity to disable biometrics?")) {
-                await disableBiometric();
-            }
-        } else {
-            await registerBiometric();
-        }
-    }
+    async function registerBiometric() {
+        if (!window.PublicKeyCredential) return alert("WebAuthn not supported on this device.");
 
-    async function registerBiometricSilently() {
-        if (!window.PublicKeyCredential) throw new Error("WebAuthn not supported");
         const challenge = randomChallenge();
         const publicKey = {
             challenge: challenge,
-            rp: { name: "CardVault" },
+            rp: { name: "Secure Card Vault" },
             user: { id: randomChallenge(), name: "vault-user", displayName: "Vault User" },
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
             authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
             timeout: 60000,
             attestation: "none"
         };
-        const credential = await navigator.credentials.create({ publicKey });
-        const credId = bufferToBase64(credential.rawId);
-        localStorage.setItem("vault_bio_id", credId);
-        localStorage.setItem("vault_bio_enabled", "true");
-        const deviceKey = bufferToBase64(randomChallenge());
-        localStorage.setItem("vault_device_key", deviceKey);
-        const encryptedMaster = CryptoJS.AES.encrypt(MASTER_KEY, deviceKey).toString();
-        localStorage.setItem("vault_master_enc", encryptedMaster);
-    }
 
-    async function registerBiometric() {
         try {
-            await registerBiometricSilently();
+            const credential = await navigator.credentials.create({ publicKey });
+            const credId = bufferToBase64(credential.rawId);
+            localStorage.setItem("vault_bio_id", credId);
+            localStorage.setItem("vault_bio_enabled", "true");
+
+            const deviceKey = bufferToBase64(randomChallenge());
+            localStorage.setItem("vault_device_key", deviceKey);
+
+            const encryptedMaster = CryptoJS.AES.encrypt(MASTER_KEY, deviceKey).toString();
+            localStorage.setItem("vault_master_enc", encryptedMaster);
+
             alert("Biometric enabled successfully!");
             updateBiometricUI();
         } catch (err) {
             console.error(err);
             alert("Biometric registration failed.");
-            document.getElementById("setupBioToggle").classList.remove("active");
-            updateBiometricUI();
         }
     }
 
@@ -1823,8 +1640,13 @@
     }
 
     async function disableBiometric() {
+        const enabled = localStorage.getItem("vault_bio_enabled");
         const storedId = localStorage.getItem("vault_bio_id");
-        if (!storedId) return;
+
+        if (!enabled || !storedId) return alert("Biometrics already disabled.");
+
+        const confirmDisable = confirm("Verify identity to disable biometrics?");
+        if (!confirmDisable) return;
 
         const challenge = randomChallenge();
         const publicKey = {
@@ -1846,6 +1668,17 @@
             updateBiometricUI();
         } catch (err) {
             alert("Verification failed. Cannot disable biometrics.");
+        }
+    }
+    
+    function deleteCard(id) {
+        if(confirm("Are you sure you want to delete this item?")) {
+            let items = getCards();
+            items = items.filter(c => c.id !== id);
+            localStorage.setItem('vault_data', CryptoJS.AES.encrypt(JSON.stringify(items), MASTER_KEY).toString());
+            clearSelection();
+            updateDropdown();
+            syncToCloud(false);
         }
     }
 </script>
