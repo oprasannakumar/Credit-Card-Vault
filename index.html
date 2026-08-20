@@ -743,7 +743,7 @@
     // --- Profile UI Management --- //
     function updateProfileUI() {
         const email = localStorage.getItem("vault_user_email");
-        const name = localStorage.getItem("vault_user_name") || "Prasanna Kumar";
+        const name = localStorage.getItem("vault_user_name");
         const pictureUrl = localStorage.getItem("vault_user_picture");
         const initial = email ? email.charAt(0).toUpperCase() : name.charAt(0).toUpperCase();
 
