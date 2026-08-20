@@ -239,10 +239,16 @@
             <h3>Secure Vault</h3>
             <p class="sub-text">Encryption at your fingertips. All data stays on your device.</p>
             <button type="button" class="btn-main" onclick="nextStep(2)">Get Started</button>
-            <button type="button" class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top:10px;">
-              📂 Restore from Backup
+            
+            <!-- New Google Options -->
+            <button type="button" class="btn-ghost google-auth-btn" onclick="connectDrive()" style="margin-top:15px; color:var(--primary-orange); border-color:var(--primary-orange);">
+                ☁️ Login to Google
+            </button>
+            <button type="button" class="btn-link" onclick="restoreFromCloud()" style="margin-top:10px;">
+                📥 Restore from Google Drive
             </button>
         </div>
+
         <div id="step2" class="hidden">
             <h3>Set Master Password</h3>
             <p class="sub-text">This unlocks your vault.</p>
@@ -296,8 +302,12 @@
             </button>
         </div>
 
+        <button type="button" class="btn-ghost google-auth-btn" onclick="connectDrive()" style="margin-top: 15px; color:var(--primary-orange); border-color:var(--primary-orange);">
+            ☁️ Login to Google
+        </button>
+        <button type="button" class="btn-link" onclick="restoreFromCloud()" style="margin-top: 10px;">📥 Restore from Google Drive</button>
         <button type="button" id="forgotLink" class="btn-link" onclick="showRecovery()">Forgot Password?</button>
-        <button type="button" class="btn-link" onclick="document.getElementById('importFile').click()" style="margin-top: 10px;">📂 Import Backup</button>
+
         
         <div class="status-footer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -579,7 +589,7 @@
         e.target.value = v.length > 2 ? v.substring(0, 2) + '/' + v.substring(2, 4) : v;
     });
 
-    window.addEventListener("load", () => {
+        window.addEventListener("load", () => {
         // Initialize Google Identity Services
         if (window.google) {
             tokenClient = google.accounts.oauth2.initTokenClient({
@@ -592,6 +602,14 @@
                     }
                     accessToken = response.access_token;
                     showToast("Google Drive Connected!");
+                    
+                    // Automatically update the buttons to show success
+                    document.querySelectorAll('.google-auth-btn').forEach(btn => {
+                        btn.innerHTML = "✅ Google Connected";
+                        btn.style.color = "#10b981"; // Success Green
+                        btn.style.borderColor = "#10b981";
+                        btn.onclick = null; // Prevent logging in twice
+                    });
                 }
             });
         }
@@ -611,6 +629,7 @@
             }
         }
     });
+
 
 
     function unlockVault() {
