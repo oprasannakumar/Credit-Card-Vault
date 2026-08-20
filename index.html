@@ -8,7 +8,10 @@
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="icon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <style>
+      
         :root { 
             --primary-orange: #f59e0b; 
             --bg-dark: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
@@ -359,7 +362,9 @@
             </div>
             
             <button type="button" class="btn-main" onclick="changePassword()">Update Password</button>
-            
+            <button type="button" class="btn-ghost" style="margin-top:15px; border-color:var(--primary-orange); color:var(--primary-orange);" onclick="syncToCloud()">☁️ Sync to Google Drive</button>
+<button type="button" class="btn-ghost" style="margin-top:10px; margin-bottom:15px;" onclick="restoreFromCloud()">📥 Restore from Drive</button>
+
             <div id="rkBox" class="hidden">
                 <div class="rk-display" id="rkVal"></div>
             </div>
@@ -479,6 +484,9 @@
 <script>
     let MASTER_KEY = "";
     let pendingRestoreData = null; // Holds the parsed file data securely
+    const GOOGLE_CLIENT_ID = "455353267035-tvggeucvch4scohdpp1bucugkaeb5a2g.apps.googleusercontent.com"; 
+    let tokenClient;
+    let accessToken = null;
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -572,6 +580,22 @@
     });
 
     window.addEventListener("load", () => {
+        // Initialize Google Identity Services
+        if (window.google) {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: GOOGLE_CLIENT_ID,
+                scope: 'https://www.googleapis.com/auth/drive.file',
+                callback: (response) => {
+                    if (response.error) {
+                        showToast("Authentication failed.");
+                        return;
+                    }
+                    accessToken = response.access_token;
+                    showToast("Google Drive Connected!");
+                }
+            });
+        }
+
         const hasVault = localStorage.getItem("vault_hash");
         const bioEnabled = localStorage.getItem("vault_bio_enabled") === "true";
 
@@ -588,6 +612,7 @@
         }
     });
 
+
     function unlockVault() {
         const pass = document.getElementById('masterPass').value;
         const storedHash = localStorage.getItem('vault_hash');
@@ -602,6 +627,90 @@
         document.getElementById('unlockSection').classList.add('hidden');
         document.getElementById('mainContent').classList.remove('hidden');
         updateDropdown();
+    }
+    // --- CLOUD SYNC LOGIC --- //
+    function connectDrive() {
+        tokenClient.requestAccessToken({prompt: 'consent'});
+    }
+
+    async function getBackupFileId() {
+        const res = await fetch("https://www.googleapis.com/drive/v3/files?q=name='vault_secure_sync.txt' and trashed=false", {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        return data.files && data.files.length > 0 ? data.files[0].id : null;
+    }
+
+    async function syncToCloud() {
+        if (!accessToken) return connectDrive();
+        
+        const encryptedData = localStorage.getItem('vault_data');
+        if (!encryptedData) return showToast("No data to sync");
+        
+        showToast("Syncing to Drive...");
+        
+        try {
+            let fileId = await getBackupFileId();
+            
+            if (!fileId) {
+                const createRes = await fetch("https://www.googleapis.com/drive/v3/files", {
+                    method: "POST",
+                    headers: { 
+                        Authorization: `Bearer ${accessToken}`, 
+                        "Content-Type": "application/json" 
+                    },
+                    body: JSON.stringify({ name: "vault_secure_sync.txt" })
+                });
+                const createData = await createRes.json();
+                fileId = createData.id;
+            }
+
+            await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+                method: "PATCH",
+                headers: { 
+                    Authorization: `Bearer ${accessToken}`, 
+                    "Content-Type": "text/plain" 
+                },
+                body: encryptedData
+            });
+            
+            showToast("Cloud Sync Complete! ☁️");
+        } catch (e) {
+            showToast("Sync Error");
+            console.error(e);
+        }
+    }
+
+    async function restoreFromCloud() {
+        if (!accessToken) return connectDrive();
+        if (!confirm("Overwrite local vault with cloud backup?")) return;
+        
+        showToast("Restoring...");
+        
+        try {
+            const fileId = await getBackupFileId();
+            if (!fileId) return showToast("No cloud backup found.");
+
+            const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            
+            const payload = await res.text();
+            
+            try {
+                const testDecrypt = CryptoJS.AES.decrypt(payload, MASTER_KEY).toString(CryptoJS.enc.Utf8);
+                if (!testDecrypt) throw new Error("Key mismatch");
+                
+                localStorage.setItem('vault_data', payload);
+                showToast("Restore Complete!");
+                updateDropdown();
+            } catch (decErr) {
+                alert("Decryption failed. The backup requires a different Master Password.");
+            }
+        } catch (e) {
+            showToast("Restore Error");
+            console.error(e);
+        }
     }
 
     // --- FORM LOGIC ---
