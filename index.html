@@ -22,8 +22,10 @@
             --success: #10b981;
         }
 
+        /* Stops mobile pull-to-refresh behavior */
         html, body {
             overscroll-behavior-y: none; 
+            overscroll-behavior: none;
         }
 
         body { 
@@ -405,7 +407,12 @@
         
         <div class="cred-group">
             <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
-            <input type="text" id="cardCvv" placeholder="CVV" maxlength="4" inputmode="numeric">
+            <div class="pwd-wrapper" style="margin-bottom: 0;">
+                <input type="password" id="cardCvv" placeholder="CVV" maxlength="3" inputmode="numeric">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('cardCvv', this)" tabindex="-1">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </button>
+            </div>
         </div>
         
         <input type="password" id="cardPin" placeholder="ATM PIN (Optional)" inputmode="numeric">
@@ -435,6 +442,8 @@
 </div>
 
 <script>
+    // Global declarations to fix ReferenceErrors from external scripts mapping Google Sign In
+    let userData = null; 
     let vaultKey = null;
     let vaultData = { cards: [], userProfile: { name: 'Vault Owner', email: 'Offline Mode' } };
     let currentEditingIndex = -1;
@@ -636,6 +645,9 @@
 
     function openCardForm(idx = -1) {
         currentEditingIndex = idx;
+        const cvvInput = document.getElementById('cardCvv');
+        cvvInput.type = 'password'; // reset to masked when opening form
+        
         if (idx >= 0) {
             const c = vaultData.cards[idx];
             document.getElementById('formTitle').innerText = 'Edit Card';
@@ -644,7 +656,7 @@
             document.getElementById('cardHolder').value = c.holder || '';
             document.getElementById('cardNumber').value = c.number || '';
             document.getElementById('cardExpiry').value = c.expiry || '';
-            document.getElementById('cardCvv').value = c.cvv || '';
+            cvvInput.value = c.cvv || '';
             document.getElementById('cardPin').value = c.pin || '';
             document.getElementById('cardNotes').value = c.notes || '';
         } else {
