@@ -349,18 +349,24 @@
     <!-- Main Authenticated Content -->
     <div id="mainContent" class="hidden">
         
-        <!-- Updated Top Bar Structure -->
-        <div class="top-action-bar">
-            <div style="display:flex; align-items: center; gap: 12px;">
+<div class="top-action-bar">
+            <!-- Left Side Actions -->
+            <div style="display:flex; align-items: center; gap: 12px; z-index: 2;">
                 <button type="button" class="profile-btn" id="topProfileAvatar" onclick="openProfileSettings()" title="Profile & Settings">
                     U
                 </button>
                 <button type="button" id="settingsBackBtn" class="btn-ghost hidden" style="padding: 0 10px; height: 38px; width: auto; border-color: var(--primary-orange); color: var(--primary-orange);" onclick="closeProfileSettings()">
-                    ⬅️ Back
+                  Back
                 </button>
-                <h2 id="topBarTitle" style="margin:0; font-size:1.15rem; color:var(--text-white); font-weight:700;">My Vault</h2>
             </div>
-            <div style="display:flex; gap:8px; align-items: center;">
+            
+            <!-- Perfectly Centered Title -->
+            <h2 id="topBarTitle" style="margin:0; font-size:1.15rem; color:var(--text-white); font-weight:700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;">
+                My Vault
+            </h2>
+
+            <!-- Right Side Actions -->
+            <div style="display:flex; gap:8px; align-items: center; z-index: 2;">
                 <button type="button" class="btn-danger" style="width:36px; height:36px; padding:0; font-size:1.1rem;" onclick="handleVaultLogout()" title="Lock Vault">🔒</button>
             </div>
         </div>
