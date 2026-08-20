@@ -716,21 +716,37 @@
             
             const payload = await res.text();
             
+            // Prompt the user for the Master Password to unlock this backup
+            let pass = prompt("Enter the Master Password used for this cloud backup:");
+            if (!pass) return showToast("Restore cancelled.");
+            
             try {
-                const testDecrypt = CryptoJS.AES.decrypt(payload, MASTER_KEY).toString(CryptoJS.enc.Utf8);
+                // Attempt to decrypt the payload using the provided password
+                const testDecrypt = CryptoJS.AES.decrypt(payload, pass).toString(CryptoJS.enc.Utf8);
                 if (!testDecrypt) throw new Error("Key mismatch");
                 
+                // If successful, save the data and sync the local Master Password Hash
                 localStorage.setItem('vault_data', payload);
+                localStorage.setItem('vault_hash', CryptoJS.SHA256(pass).toString());
+                MASTER_KEY = pass; // Set active session key
+                
                 showToast("Restore Complete!");
+                
+                // Immediately log the user in and show the vault
+                document.getElementById('onboarding').classList.add('hidden');
+                document.getElementById('unlockSection').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
                 updateDropdown();
+                
             } catch (decErr) {
-                alert("Decryption failed. The backup requires a different Master Password.");
+                alert("Decryption failed. Incorrect Master Password.");
             }
         } catch (e) {
             showToast("Restore Error");
             console.error(e);
         }
     }
+
 
     // --- FORM LOGIC ---
     function switchFormTab(tab) {
